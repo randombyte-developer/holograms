@@ -13,6 +13,8 @@ import org.spongepowered.api.config.DefaultConfig
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.cause.Cause
 import org.spongepowered.api.event.cause.NamedCause
+import org.spongepowered.api.event.cause.entity.spawn.SpawnCause
+import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes
 import org.spongepowered.api.event.entity.DamageEntityEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.world.chunk.LoadChunkEvent
@@ -32,7 +34,7 @@ class Holograms @Inject constructor(val logger: Logger,
         const val VERSION = "v0.1"
         const val AUTHOR = "RandomByte"
 
-        var PLUGIN_CAUSE = Cause.of(NamedCause.source(Sponge.getPluginManager().fromInstance(this)))
+        var PLUGIN_SPAWN_CAUSE = Cause.source(SpawnCause.builder().type(SpawnTypes.PLUGIN).build()).build()
         lateinit var LOGGER: Logger
     }
 
