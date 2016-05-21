@@ -58,6 +58,7 @@ class Hologram(val location: Location<World>, val text: Text, var armorStandUUID
             armorStand.offer(Keys.DISPLAY_NAME, text)
             armorStand.offer(Keys.CUSTOM_NAME_VISIBLE, true)
             armorStand.offer(Keys.ARMOR_STAND_MARKER, true)
+            armorStand.offer(Keys.ARMOR_STAND_HAS_GRAVITY, false)
             setInvisible(armorStand)
         }
 
