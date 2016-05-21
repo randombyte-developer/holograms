@@ -33,9 +33,9 @@ object ConfigManager {
     fun load(path: String) = configLoader.load(configOptions).getNode(path)
     fun save(node: ConfigurationNode) = configLoader.save(node)
 
-    fun addHologram(hologram: Hologram) = setItemHolograms(getItemHolograms() + hologram)
-    fun deleteHologramByArmorStandUUID(uuid: UUID) = setItemHolograms(getItemHolograms().filter { !it.armorStandUUID!!.equals(uuid) })
-    fun getItemHolograms() = load(HOLOGRAMS_NODE).getList(TypeToken.of(Hologram::class.java))
-    fun setItemHolograms(holograms: List<Hologram>) =
+    fun addHologram(hologram: Hologram) = setHolograms(getHolograms() + hologram)
+    fun deleteHologramByArmorStandUUID(uuid: UUID) = setHolograms(getHolograms().filter { !it.armorStandUUID!!.equals(uuid) })
+    fun getHolograms() = load(HOLOGRAMS_NODE).getList(TypeToken.of(Hologram::class.java))
+    fun setHolograms(holograms: List<Hologram>) =
             save(load(HOLOGRAMS_NODE).setValue(object : TypeToken<List<Hologram>>() {}, holograms).parent)
 }

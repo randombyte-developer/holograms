@@ -1,10 +1,10 @@
 package de.randombyte.holograms.commands
 
+import de.randombyte.holograms.OptionalExtension.Companion.presence
 import de.randombyte.holograms.Hologram
 import de.randombyte.holograms.config.ConfigManager
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.CommandResult
-import org.spongepowered.api.command.CommandSource
 import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.service.pagination.PaginationService
@@ -50,7 +50,10 @@ class ListNearbyHologramsCommand : PlayerCommandExecutor() {
             .build()
         }
 
-        fun getNearbyHolograms(player: Player, range: Int) = ConfigManager.getItemHolograms()
-                .filter { it.location.position.distance(player.location.position) < range }
+        fun getNearbyHolograms(player: Player, mayDistance: Int): List<Hologram> = ConfigManager.getHolograms().filter {
+            player.location.extent.getEntity(it.armorStandUUID).presence { armorStand ->
+                armorStand.location.position.distance(player.location.position) < mayDistance
+            }.absence { false }
+        }
     }
 }
