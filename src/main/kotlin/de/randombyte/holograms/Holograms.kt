@@ -55,20 +55,4 @@ class Holograms @Inject constructor(val logger: Logger,
 
         logger.info("$NAME loaded: $VERSION")
     }
-
-    fun Location<World>.inChunk(chunk: Chunk) = inExtent(chunk.world) && chunk.containsBlock(blockPosition)
-    @Listener
-    fun onLoadChunk(event: LoadChunkEvent) {
-        ConfigManager.getItemHolograms().filter { it.location.inChunk(event.targetChunk) }.forEach { it.spawn() }
-    }
-
-    //Prevent damage on ArmorStands
-    @Listener
-    fun onHitArmorStand(event: DamageEntityEvent) {
-        if (ConfigManager.getItemHolograms().any {
-            it.location.inExtent(event.targetEntity.world) && it.armorStandUUID!!.equals(event.targetEntity.uniqueId)
-        }) {
-            event.isCancelled = true
-        }
-    }
 }
