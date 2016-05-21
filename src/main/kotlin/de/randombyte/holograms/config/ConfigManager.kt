@@ -4,8 +4,6 @@ import com.google.common.reflect.TypeToken
 import de.randombyte.holograms.Hologram
 import de.randombyte.holograms.config.serializer.FormattingCodeTextSerializer
 import de.randombyte.holograms.config.serializer.HologramSerializer
-import de.randombyte.holograms.config.serializer.LocationSerializer
-import de.randombyte.holograms.config.serializer.Vector3dSerializer
 import ninja.leaping.configurate.ConfigurationNode
 import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
@@ -25,8 +23,6 @@ object ConfigManager {
         ConfigurationOptions.defaults()
                 .setSerializers(TypeSerializers.getDefaultSerializers().newChild()
                         .registerType(TypeTokens.HOLOGRAM, HologramSerializer)
-                        .registerType(TypeTokens.LOCATION, LocationSerializer)
-                        .registerType(TypeTokens.VECTOR3D, Vector3dSerializer)
                         .registerType(TypeTokens.TEXT, FormattingCodeTextSerializer))
     }
 

@@ -21,7 +21,7 @@ class ListNearbyHologramsCommand : PlayerCommandExecutor() {
     companion object {
         fun sendHologramList(player: Player) {
             val hologramTextList = getHologramTextList(getNearbyHolograms(player, 10), deleteCallback = { hologram ->
-                hologram.remove()
+                player.location.extent.getEntity(hologram.armorStandUUID).ifPresent { it.remove() }
                 ConfigManager.deleteHologramByArmorStandUUID(hologram.armorStandUUID!!)
                 player.sendMessage(Text.of(TextColors.YELLOW, "Hologram deleted!"))
                 sendHologramList(player) //Display new list

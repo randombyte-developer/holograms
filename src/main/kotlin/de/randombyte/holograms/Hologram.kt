@@ -15,42 +15,26 @@ import java.util.*
  * An invisible [ArmorStand] at [location] with a [text] over its head. Optionally an [armorStandUUID] if an ArmorStand
  * already exists.
  */
-class Hologram(val location: Location<World>, val text: Text, var armorStandUUID: UUID? = null) {
+class Hologram(val text: Text, var armorStandUUID: UUID? = null) {
 
     /**
-     * Spawns an ArmorStand if no uuid was given in the constructor.
+     * Spawns an ArmorStand at [location] if no uuid was given in the constructor.
      * @return true if spawned, false if not
      * @throws IllegalStateException when there is an uuid without an corresponding ArmorStand
      */
-    fun spawn(): Boolean {
+    fun spawn(location: Location<World>): Boolean {
         val armorStand = if (armorStandUUID == null) {
             //Create new ArmorStand
             location.extent.createEntity(EntityTypes.ARMOR_STAND, location.position)
                     .presence { it }.absence { null } as ArmorStand
-        } else {
-            //Search existing ArmorStand based on saved UUID
-            location.extent.getEntity(armorStandUUID).orElseThrow {
-                throw IllegalStateException("UUID $armorStandUUID present without corresponding ArmorStand in world " +
-                        "of Hologram location! Please remove this Hologram manually from the config.")
-            } as ArmorStand
-        }
+        } else return false //Already spawned
 
-        val armorStandAlreadyInWorld = armorStandUUID != null
-        return if (!armorStandAlreadyInWorld && location.extent.spawnEntity(armorStand, Holograms.PLUGIN_SPAWN_CAUSE)) {
+        return if (location.extent.spawnEntity(armorStand, Holograms.PLUGIN_SPAWN_CAUSE)) {
             //Spawn created ArmorStand
             armorStandUUID = armorStand.uniqueId
             prepare(armorStand, text)
             true
-        } else false //Couldn't be spawned or already in world
-    }
-
-    /**
-     * Removes the ArmorStand from the world.
-     */
-    fun remove() {
-        if (armorStandUUID != null) {
-            location.extent.getEntity(armorStandUUID).ifPresent { it.remove() }
-        }
+        } else false //Couldn't be spawned
     }
 
     companion object {

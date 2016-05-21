@@ -16,8 +16,8 @@ class SpawnTextHologramCommand : PlayerCommandExecutor() {
     override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
         val plainText = args.getOne<String>("text").get()
         val text = TextSerializers.FORMATTING_CODE.deserialize(plainText)
-        val hologram = Hologram(player.location, text)
-        return if (hologram.spawn()) {
+        val hologram = Hologram(text)
+        return if (hologram.spawn(player.location)) {
             ConfigManager.addHologram(hologram)
             CommandResult.success()
         } else {
