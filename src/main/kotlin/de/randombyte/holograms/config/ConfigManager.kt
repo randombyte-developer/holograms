@@ -11,6 +11,7 @@ import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers
+import java.util.*
 
 object ConfigManager {
 
@@ -33,6 +34,7 @@ object ConfigManager {
     fun save(node: ConfigurationNode) = configLoader.save(node)
 
     fun addHologram(hologram: Hologram) = setItemHolograms(getItemHolograms() + hologram)
+    fun deleteHologramByArmorStandUUID(uuid: UUID) = setItemHolograms(getItemHolograms().filter { !it.armorStandUUID!!.equals(uuid) })
     fun getItemHolograms() = load(HOLOGRAMS_NODE).getList(TypeToken.of(Hologram::class.java))
     fun setItemHolograms(holograms: List<Hologram>) =
             save(load(HOLOGRAMS_NODE).setValue(object : TypeToken<List<Hologram>>() {}, holograms).parent)

@@ -1,6 +1,7 @@
 package de.randombyte.holograms
 
 import com.google.inject.Inject
+import de.randombyte.holograms.commands.ListNearbyHologramsCommand
 import de.randombyte.holograms.commands.SpawnTextHologramCommand
 import de.randombyte.holograms.config.ConfigManager
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
@@ -47,11 +48,14 @@ class Holograms @Inject constructor(val logger: Logger,
         ConfigManager.configLoader = configLoader
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
-            .child(CommandSpec.builder()
+                .child(CommandSpec.builder()
                     .arguments(GenericArguments.remainingJoinedStrings(Text.of("text")))
                     .executor(SpawnTextHologramCommand())
                     .build(), "create")
-            .build(), "holograms")
+                .child(CommandSpec.builder()
+                        .executor(ListNearbyHologramsCommand())
+                        .build(), "list")
+                .build(), "holograms")
 
         logger.info("$NAME loaded: $VERSION")
     }
