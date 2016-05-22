@@ -51,9 +51,11 @@ class Holograms @Inject constructor(val logger: Logger,
                 .child(CommandSpec.builder()
                         .arguments(GenericArguments.remainingJoinedStrings(Text.of("text")))
                         .executor(SpawnTextHologramCommand())
+                        .description(Text.of("Creates a Hologram at your feet with the given text which may contain color codes."))
                         .build(), "create")
                 .child(CommandSpec.builder()
                         .executor(ListNearbyHologramsCommand())
+                        .description(Text.of("Lists nearby Holograms to delete them."))
                         .build(), "list")
                 .build(), "holograms")
 
