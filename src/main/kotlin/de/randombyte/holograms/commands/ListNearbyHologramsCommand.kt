@@ -50,9 +50,9 @@ class ListNearbyHologramsCommand : PlayerCommandExecutor() {
             .build()
         }
 
-        fun getNearbyHolograms(player: Player, mayDistance: Int): List<Hologram> = ConfigManager.getHolograms().filter {
+        fun getNearbyHolograms(player: Player, maxDistance: Int): List<Hologram> = ConfigManager.getHolograms().filter {
             player.location.extent.getEntity(it.armorStandUUID).presence { armorStand ->
-                armorStand.location.position.distance(player.location.position) < mayDistance
+                armorStand.location.position.distance(player.location.position) < maxDistance
             }.absence { false }
         }
     }
