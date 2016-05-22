@@ -42,10 +42,28 @@ class Hologram(val text: Text, var armorStandUUID: UUID? = null) {
         fun prepare(armorStand: ArmorStand, text: Text) {
             armorStand.offer(Keys.DISPLAY_NAME, text)
             armorStand.offer(Keys.CUSTOM_NAME_VISIBLE, true)
-            armorStand.offer(Keys.ARMOR_STAND_MARKER, true)
-            armorStand.offer(Keys.ARMOR_STAND_HAS_GRAVITY, false)
-            setInvisible(armorStand)
+
+            //armorStand.offer(Keys.ARMOR_STAND_HAS_GRAVITY, false)
+            setNoGravity(armorStand) //waiting for bleeding merged into master
+
+            //armorStand.offer(Keys.ARMOR_STAND_MARKER, true)
+            setMarker(armorStand)//waiting for bleeding merged into master
+
+            setInvisible(armorStand) //https://github.com/SpongePowered/SpongeAPI/issues/1151
         }
+
+        fun setMarker(entity: Entity) = setBooleanEntitydata(entity, "Marker", true)
+        fun setNoGravity(entity: Entity) = setBooleanEntitydata(entity, "NoGravity", true)
+
+        /**
+         * [Keys.INVISIBLE] makes the entity completely gone, even in spectator mode, so I have to use this method to
+         * hide the armor stand body. Must be called after spawning the entity.
+         * https://github.com/SpongePowered/SpongeAPI/issues/1151
+         */
+        fun setInvisible(entity: Entity) = setBooleanEntitydata(entity, "Invisible", true)
+
+        fun setBooleanEntitydata(entity: Entity, dataTag: String, active: Boolean) = setEntitydata(entity, "{$dataTag:${if (active) 1 else 0}b}")
+        fun setEntitydata(entity: Entity, data: String) = executeCommand("entitydata ${entity.uniqueId} $data")
 
         /**
          * Executes a [command] as the server console. [pingBefore] defaults to true, which means that a command is
@@ -56,12 +74,5 @@ class Hologram(val text: Text, var armorStandUUID: UUID? = null) {
             if (pingBefore) executeCommand("msg", false) //https://github.com/SpongePowered/SpongeCommon/issues/665
             return Sponge.getCommandManager().process(Sponge.getServer().console, command)
         }
-
-        /**
-         * [Keys.INVISIBLE] makes the entity completely gone, even in spectator mode, so I have to use this method to
-         * hide the armor stand body. Must be called after spawning the entity.
-         * https://github.com/SpongePowered/SpongeAPI/issues/1151
-         */
-        fun setInvisible(entity: Entity) = executeCommand("entitydata ${entity.uniqueId} {Invisible:1b}")
     }
 }
