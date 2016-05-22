@@ -49,9 +49,9 @@ class Holograms @Inject constructor(val logger: Logger,
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
                 .child(CommandSpec.builder()
-                    .arguments(GenericArguments.remainingJoinedStrings(Text.of("text")))
-                    .executor(SpawnTextHologramCommand())
-                    .build(), "create")
+                        .arguments(GenericArguments.remainingJoinedStrings(Text.of("text")))
+                        .executor(SpawnTextHologramCommand())
+                        .build(), "create")
                 .child(CommandSpec.builder()
                         .executor(ListNearbyHologramsCommand())
                         .build(), "list")
