@@ -9,7 +9,7 @@ version "0.1.1"
 repositories {
     jcenter()
     maven { url "https://repo.spongepowered.org/maven/" }
-    maven { url 'https://jitpack.io' }
+    maven { url "https://jitpack.io" }
 }
 
 spongestart {
@@ -31,7 +31,7 @@ dependencies {
 jar {
     configurations.shade.each { dep ->
         from(project.zipTree(dep)) {
-            exclude 'META-INF', 'META-INF/**'
+            exclude "META-INF", "META-INF/**"
         }
     }
 }
