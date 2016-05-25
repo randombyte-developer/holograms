@@ -1,5 +1,6 @@
 package de.randombyte.holograms
 
+import de.randombyte.holograms.config.ConfigManager
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.data.key.Keys
@@ -26,6 +27,14 @@ object Hologram {
             prepare(armorStand, text)
             return@mapIndexed armorStand.uniqueId to text
         })
+    }
+
+    fun remove(world: World, uuid: UUID) {
+        ConfigManager.getHolograms(world).filter { it.first.equals(uuid) }.forEach { hologram ->
+            hologram.second.forEach { line ->
+                world.getEntity(line.first).ifPresent { it.remove() }
+            }
+        }
     }
 
     fun prepare(entity: Entity, text: Text) {

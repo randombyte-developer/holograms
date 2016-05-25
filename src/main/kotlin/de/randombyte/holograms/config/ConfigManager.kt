@@ -30,6 +30,10 @@ object ConfigManager {
         setHolograms(extent, getHolograms(extent).toMutableList() + Pair(UUID.randomUUID(), lines))
     }
 
+    fun removeHologram(extent: Extent, uuid: UUID) {
+        setHolograms(extent, getHolograms(extent).filterNot { it.first.equals(uuid) })
+    }
+
     //List<Pair<hologramUUID, List<Pair<armorStandUUID, armorStandText>>>>
     fun getHolograms(extent: Extent): List<Pair<UUID, List<Pair<UUID, Text>>>> {
         return getHologramsNode(extent).childrenMap.map { hologramNode ->
