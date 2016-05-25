@@ -7,16 +7,11 @@ import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.text.Text
 import org.spongepowered.api.text.format.TextColors
-import org.spongepowered.api.text.serializer.TextSerializers
 
-/**
- * Spawns an ArmorStand with various additional data; command expects a displayedText argument
- */
-class SpawnTextHologramCommand : PlayerCommandExecutor() {
+class SpawnMultiLineTextHologramCommand : PlayerCommandExecutor() {
     override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
-        val plainText = args.getOne<String>("text").get()
-        val text = TextSerializers.FORMATTING_CODE.deserialize(plainText)
-        val hologram = Hologram.spawn(listOf(text), player.location)
+        val numberLines = args.getOne<Int>("numberOfLines").get()
+        val hologram = Hologram.spawn(textListOfSize(numberLines), player.location)
         return if (hologram.isPresent) {
             ConfigManager.addHologram(player.world, hologram.get())
             CommandResult.success()
@@ -24,5 +19,11 @@ class SpawnTextHologramCommand : PlayerCommandExecutor() {
             player.sendMessage(Text.of(TextColors.RED, "Couldn't spawn ArmorStand!"))
             CommandResult.empty()
         }
+    }
+
+    fun textListOfSize(size: Int): List<Text> {
+        val list = mutableListOf<Text>()
+        (0..(size - 1)).forEach { list.add(Text.of("$it")) }
+        return list
     }
 }

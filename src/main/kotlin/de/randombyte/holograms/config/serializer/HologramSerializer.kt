@@ -1,30 +1,26 @@
 package de.randombyte.holograms.config.serializer
 
 import com.google.common.reflect.TypeToken
-import de.randombyte.holograms.Hologram
-import de.randombyte.holograms.config.TypeTokens
 import ninja.leaping.configurate.ConfigurationNode
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer
+import org.spongepowered.api.text.Text
+import org.spongepowered.api.text.serializer.TextSerializers
+import java.util.*
 
-/**
- * @param logger For reporting errors
- */
-object HologramSerializer : TypeSerializer<Hologram> {
+object HologramSerializer {
 
-    const val ARMORSTAND_UUID_NODE = "armorStandUUID"
-    const val TEXT_NODE = "text"
+    val LIST_LIST_STRING_TYPE = object : TypeToken<List<List<String>>>() {}
 
-    /**
-     * @return null if Hologram can't be created
-     */
-    override fun deserialize(type: TypeToken<*>, value: ConfigurationNode): Hologram? {
-        val uuid = value.getNode(ARMORSTAND_UUID_NODE).getValue(TypeTokens.UUID)
-        val text = value.getNode(TEXT_NODE).getValue(TypeTokens.TEXT)
-        return Hologram(text, uuid)
+    fun deserialize(value: ConfigurationNode): List<Pair<UUID, Text>> {
+        val list = value.getValue(LIST_LIST_STRING_TYPE)
+        return list.map { strings ->
+            UUID.fromString(strings[0]) to TextSerializers.FORMATTING_CODE.deserialize(strings[1])
+        }
     }
 
-    override fun serialize(type: TypeToken<*>, hologram: Hologram, value: ConfigurationNode) {
-        value.getNode(ARMORSTAND_UUID_NODE).setValue(TypeTokens.UUID, hologram.armorStandUUID)
-        value.getNode(TEXT_NODE).setValue(TypeTokens.TEXT, hologram.text)
+    fun serialize(lines: List<Pair<UUID, Text>>, value: ConfigurationNode): ConfigurationNode {
+        val stringPairs = lines.map { line ->
+            listOf(line.first.toString(), TextSerializers.FORMATTING_CODE.serialize(line.second))
+        }
+        return value.setValue(LIST_LIST_STRING_TYPE, stringPairs)
     }
 }
