@@ -35,7 +35,7 @@ class Holograms @Inject constructor(val logger: Logger,
         const val VERSION = "v0.1.1"
         const val AUTHOR = "RandomByte"
 
-        var PLUGIN_SPAWN_CAUSE = Cause.source(SpawnCause.builder().type(SpawnTypes.PLUGIN).build()).build()
+        lateinit var PLUGIN_SPAWN_CAUSE: Cause
         lateinit var LOGGER: Logger
     }
 
@@ -45,6 +45,7 @@ class Holograms @Inject constructor(val logger: Logger,
 
     @Listener
     fun onInit(event: GameInitializationEvent) {
+        PLUGIN_SPAWN_CAUSE = Cause.source(SpawnCause.builder().type(SpawnTypes.PLUGIN).build()).build()
         ConfigManager.configLoader = configLoader
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
