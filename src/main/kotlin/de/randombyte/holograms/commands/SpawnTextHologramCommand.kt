@@ -12,8 +12,8 @@ import org.spongepowered.api.text.serializer.TextSerializers
 /**
  * Spawns an ArmorStand with various additional data; command expects a displayedText argument
  */
-class SpawnTextHologramCommand : PlayerCommandExecutor() {
-    override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
+class SpawnTextHologramCommand : PermissionNeededCommandExecutor("de.randombyte.holograms") {
+    override fun executedWithPermission(player: Player, args: CommandContext): CommandResult {
         val plainText = args.getOne<String>("text").get()
         val text = TextSerializers.FORMATTING_CODE.deserialize(plainText)
         val hologram = Hologram.spawn(listOf(text), player.location)

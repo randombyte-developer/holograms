@@ -13,8 +13,8 @@ import org.spongepowered.api.text.action.TextActions
 import org.spongepowered.api.text.format.TextColors
 import java.util.*
 
-class ListNearbyHologramsCommand : PlayerCommandExecutor() {
-    override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
+class ListNearbyHologramsCommand : PermissionNeededCommandExecutor("de.randombyte.holograms") {
+    override fun executedWithPermission(player: Player, args: CommandContext): CommandResult {
         sendHologramList(player)
         return CommandResult.success()
     }

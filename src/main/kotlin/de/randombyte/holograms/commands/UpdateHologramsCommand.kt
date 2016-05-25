@@ -8,8 +8,8 @@ import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.text.Text
 import org.spongepowered.api.text.format.TextColors
 
-class UpdateHologramsCommand : PlayerCommandExecutor() {
-    override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
+class UpdateHologramsCommand : PermissionNeededCommandExecutor("de.randombyte.holograms") {
+    override fun executedWithPermission(player: Player, args: CommandContext): CommandResult {
         ConfigManager.getHolograms(player.world).forEach { hologram ->
             hologram.second.forEach { line ->
                 player.world.getEntity(line.first).ifPresent { it.offer(Keys.DISPLAY_NAME, line.second) }

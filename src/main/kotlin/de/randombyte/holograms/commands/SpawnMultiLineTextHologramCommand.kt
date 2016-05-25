@@ -8,8 +8,8 @@ import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.text.Text
 
-class SpawnMultiLineTextHologramCommand : PlayerCommandExecutor() {
-    override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
+class SpawnMultiLineTextHologramCommand : PermissionNeededCommandExecutor("de.randombyte.holograms") {
+    override fun executedWithPermission(player: Player, args: CommandContext): CommandResult {
         val numberLines = args.getOne<Int>("numberOfLines").get()
         val hologram = Hologram.spawn(textListOfSize(numberLines), player.location)
         return if (hologram.isPresent) {
