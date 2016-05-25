@@ -31,7 +31,8 @@ object ConfigManager {
     }
 
     fun removeHologram(extent: Extent, uuid: UUID) {
-        setHolograms(extent, getHolograms(extent).filterNot { it.first.equals(uuid) })
+        val rest = getHolograms(extent).filterNot { it.first.equals(uuid) }
+        setHolograms(extent, rest)
     }
 
     //List<Pair<hologramUUID, List<Pair<armorStandUUID, armorStandText>>>>
@@ -43,6 +44,7 @@ object ConfigManager {
 
     fun setHolograms(extent: Extent, holograms: List<Pair<UUID, List<Pair<UUID, Text>>>>) {
         val hologramsNode = getHologramsNode(extent)
+        hologramsNode.value = null //Clear
         holograms.forEach { hologram ->
             HologramSerializer.serialize(hologram.second, hologramsNode.getNode(hologram.first))
         }
