@@ -16,9 +16,9 @@ class SpawnTextHologramCommand : PlayerCommandExecutor() {
     override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
         val plainText = args.getOne<String>("text").get()
         val text = TextSerializers.FORMATTING_CODE.deserialize(plainText)
-        val hologram = Hologram(text)
-        return if (hologram.spawn(player.location)) {
-            ConfigManager.addHologram(hologram)
+        val hologram = Hologram.spawn(listOf(text), player.location)
+        return if (hologram.isPresent) {
+            ConfigManager.addHologram(player.world, hologram.get())
             CommandResult.success()
         } else {
             player.sendMessage(Text.of(TextColors.RED, "Couldn't spawn ArmorStand!"))
