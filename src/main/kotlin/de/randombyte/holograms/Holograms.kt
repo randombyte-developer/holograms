@@ -28,7 +28,7 @@ class Holograms @Inject constructor(val logger: Logger,
     companion object {
         const val NAME = "Holograms"
         const val ID = "de.randombyte.holograms"
-        const val VERSION = "v0.2"
+        const val VERSION = "v0.2.1"
         const val AUTHOR = "RandomByte"
 
         lateinit var PLUGIN_SPAWN_CAUSE: Cause
