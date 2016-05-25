@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import de.randombyte.holograms.commands.ListNearbyHologramsCommand
 import de.randombyte.holograms.commands.SpawnMultiLineTextHologramCommand
 import de.randombyte.holograms.commands.SpawnTextHologramCommand
+import de.randombyte.holograms.commands.UpdateHologramsCommand
 import de.randombyte.holograms.config.ConfigManager
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
@@ -58,6 +59,10 @@ class Holograms @Inject constructor(val logger: Logger,
                         .executor(ListNearbyHologramsCommand())
                         .description(Text.of("Lists nearby Holograms to delete them."))
                         .build(), "list")
+                .child(CommandSpec.builder()
+                        .executor(UpdateHologramsCommand())
+                        .description(Text.of("Updates Holograms in players world to the values of the config file."))
+                        .build(), "update")
                 .build(), "holograms")
 
         logger.info("$NAME loaded: $VERSION")
