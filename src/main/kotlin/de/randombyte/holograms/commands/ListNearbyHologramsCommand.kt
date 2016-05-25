@@ -42,7 +42,9 @@ class ListNearbyHologramsCommand : PlayerCommandExecutor() {
          * @return A list of [Text] elements which represent the given [holograms]
          */
         fun getHologramTextList(holograms: List<Hologram>, deleteCallback: (Hologram) -> Unit) = holograms.map { hologram ->
-            Text.builder("- \"").append(hologram.text).append(Text.of("\""))
+            Text.builder()
+                    .append(Text.builder("- \"").append(hologram.text).append(Text.of("\""))
+                            .onHover(TextActions.showText(Text.of(hologram.armorStandUUID!!.toString()))).build())
                     .append(Text.builder(" [DELETE]")
                     .color(TextColors.RED)
                     .onClick(TextActions.executeCallback { deleteCallback.invoke(hologram) })
