@@ -31,6 +31,8 @@ class Holograms @Inject constructor(val logger: Logger,
         const val VERSION = "v0.2.1"
         const val AUTHOR = "RandomByte"
 
+        const val HOLOGRAMS_PERMISSION = "de.randombyte.holograms"
+
         lateinit var PLUGIN_SPAWN_CAUSE: Cause
         lateinit var LOGGER: Logger
     }

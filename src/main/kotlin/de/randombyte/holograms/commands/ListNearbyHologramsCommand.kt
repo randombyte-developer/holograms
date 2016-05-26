@@ -1,6 +1,7 @@
 package de.randombyte.holograms.commands
 
 import de.randombyte.holograms.Hologram
+import de.randombyte.holograms.Holograms
 import de.randombyte.holograms.config.ConfigManager
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.CommandResult
@@ -12,7 +13,7 @@ import org.spongepowered.api.text.action.TextActions
 import org.spongepowered.api.text.format.TextColors
 import java.util.*
 
-class ListNearbyHologramsCommand : PermissionNeededCommandExecutor("de.randombyte.holograms") {
+class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOLOGRAMS_PERMISSION) {
     override fun executedWithPermission(player: Player, args: CommandContext): CommandResult {
         sendHologramList(player)
         return CommandResult.success()
