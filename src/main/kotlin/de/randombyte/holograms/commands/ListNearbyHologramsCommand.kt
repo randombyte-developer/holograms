@@ -1,7 +1,6 @@
 package de.randombyte.holograms.commands
 
 import de.randombyte.holograms.Hologram
-import de.randombyte.holograms.OptionalExtension.Companion.presence
 import de.randombyte.holograms.config.ConfigManager
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.CommandResult
@@ -54,9 +53,9 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor("de.randombyt
         fun getNearbyHolograms(player: Player, maxDistance: Int): List<Pair<UUID, List<Pair<UUID, Text>>>> {
             return ConfigManager.getHolograms(player.world).filter { hologram ->
                 hologram.second.any { line ->
-                    player.world.getEntity(line.first).presence { armorStand ->
-                        armorStand.location.position.distance(player.location.position) < maxDistance
-                    }.absence { false }
+                    val optArmorStand = player.world.getEntity(line.first)
+                    return@any optArmorStand.isPresent &&
+                            optArmorStand.get().location.position.distance(player.location.position) < maxDistance
                 }
             }
         }
