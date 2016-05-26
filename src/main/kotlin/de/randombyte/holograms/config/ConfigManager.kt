@@ -10,7 +10,8 @@ import java.util.*
 object ConfigManager {
 
     /**
-     * holograms {
+     * Example:
+     * worlds {
      *     <worldUUID1> {
      *         <hologramsUUID1> [
      *             [<armorStandUUID1>, <text1>],
@@ -26,21 +27,14 @@ object ConfigManager {
     //Initialized in init phase of plugin
     lateinit var configLoader: ConfigurationLoader<CommentedConfigurationNode>
 
-    fun addHologram(extent: Extent, lines: List<Pair<UUID, Text>>) {
-        setHolograms(extent, getHolograms(extent).toMutableList() + Pair(UUID.randomUUID(), lines))
-    }
-
-    fun deleteHologram(extent: Extent, uuid: UUID) {
-        val rest = getHolograms(extent).filterNot { it.first.equals(uuid) }
-        setHolograms(extent, rest)
-    }
+    fun addHologram(extent: Extent, lines: List<Pair<UUID, Text>>) = setHolograms(extent, getHolograms(extent) + Pair(UUID.randomUUID(), lines))
+    fun deleteHologram(extent: Extent, uuid: UUID) = setHolograms(extent, getHolograms(extent).filterNot { it.first.equals(uuid) })
 
     //List<Pair<hologramUUID, List<Pair<armorStandUUID, armorStandText>>>>
-    fun getHolograms(extent: Extent): List<Pair<UUID, List<Pair<UUID, Text>>>> {
-        return getHologramsNode(extent).childrenMap.map { hologramNode ->
-            UUID.fromString(hologramNode.key as String) to HologramSerializer.deserialize(hologramNode.value)
-        }
-    }
+    fun getHolograms(extent: Extent): List<Pair<UUID, List<Pair<UUID, Text>>>> =
+            getHologramsNode(extent).childrenMap.map { hologramNode ->
+                UUID.fromString(hologramNode.key as String) to HologramSerializer.deserialize(hologramNode.value)
+            }
 
     fun setHolograms(extent: Extent, holograms: List<Pair<UUID, List<Pair<UUID, Text>>>>) {
         val hologramsNode = getHologramsNode(extent)
@@ -52,6 +46,6 @@ object ConfigManager {
     }
 
     private fun getRootNode() = configLoader.load()
-    private fun getExtentsNode() = getRootNode().getNode(WORLDS_NODE)
-    private fun getHologramsNode(extent: Extent) = getExtentsNode().getNode(extent.uniqueId.toString())
+    private fun getWorldsNode() = getRootNode().getNode(WORLDS_NODE)
+    private fun getHologramsNode(extent: Extent) = getWorldsNode().getNode(extent.uniqueId.toString())
 }
