@@ -1,7 +1,6 @@
 package de.randombyte.holograms.commands
 
 import de.randombyte.holograms.Hologram
-import de.randombyte.holograms.HologramTextLine
 import de.randombyte.holograms.Holograms
 import de.randombyte.holograms.config.ConfigManager
 import org.spongepowered.api.Sponge
@@ -39,20 +38,20 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
             }
         }
 
-        private fun getHologramTextList(holograms: List<Pair<UUID, List<HologramTextLine>>>, deleteCallback: (UUID) -> Unit) =
+        private fun getHologramTextList(holograms: List<Hologram>, deleteCallback: (UUID) -> Unit) =
                 holograms.map { hologram ->
                     Text.builder()
-                            .append(Text.builder("- \"").append(hologram.second[0].displayText).append(Text.of("\""))
-                                    .onHover(TextActions.showText(Text.of(hologram.first.toString()))).build())
+                            .append(Text.builder("- \"").append(hologram.lines.first().displayText).append(Text.of("\""))
+                                    .onHover(TextActions.showText(Text.of(hologram.uuid.toString()))).build())
                             .append(Text.builder(" [DELETE]")
                                     .color(TextColors.RED)
-                                    .onClick(TextActions.executeCallback { deleteCallback.invoke(hologram.first) })
+                                    .onClick(TextActions.executeCallback { deleteCallback.invoke(hologram.uuid) })
                                     .build())
                             .build()
                 }
 
-        private fun getNearbyHolograms(player: Player, maxDistance: Int): List<Pair<UUID, List<HologramTextLine>>> =
-                ConfigManager.getHolograms(player.world).filter { it.second.any { line ->
+        private fun getNearbyHolograms(player: Player, maxDistance: Int): List<Hologram> =
+                ConfigManager.getHolograms(player.world).filter { it.lines.any { line ->
                     val optArmorStand = player.world.getEntity(line.armorStandUUID)
                     return@any optArmorStand.isPresent &&
                             optArmorStand.get().location.position.distance(player.location.position) < maxDistance

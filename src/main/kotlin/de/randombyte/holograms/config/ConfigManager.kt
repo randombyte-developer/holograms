@@ -1,6 +1,6 @@
 package de.randombyte.holograms.config
 
-import de.randombyte.holograms.HologramTextLine
+import de.randombyte.holograms.Hologram
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
 import org.spongepowered.api.world.extent.Extent
@@ -26,20 +26,18 @@ object ConfigManager {
     //Initialized in init phase of plugin
     lateinit var configLoader: ConfigurationLoader<CommentedConfigurationNode>
 
-    fun addHologram(extent: Extent, lines: List<HologramTextLine>) = setHolograms(extent, getHolograms(extent) + Pair(UUID.randomUUID(), lines))
-    fun deleteHologram(extent: Extent, uuid: UUID) = setHolograms(extent, getHolograms(extent).filterNot { it.first.equals(uuid) })
+    fun addHologram(extent: Extent, hologram: Hologram) = setHolograms(extent, getHolograms(extent) + hologram)
+    fun deleteHologram(extent: Extent, uuid: UUID) = setHolograms(extent, getHolograms(extent).filterNot { it.uuid.equals(uuid) })
 
-    //List<Pair<hologramUUID, List<HologramTextLine>>>
-    fun getHolograms(extent: Extent): List<Pair<UUID, List<HologramTextLine>>> =
-            getHologramsNode(extent).childrenMap.map { hologramNode ->
-                UUID.fromString(hologramNode.key as String) to HologramSerializer.deserialize(hologramNode.value)
-            }
+    fun getHolograms(extent: Extent): List<Hologram> = getHologramsNode(extent).childrenMap.map { hologramNode ->
+        HologramSerializer.deserialize(hologramNode.value)
+    }
 
-    fun setHolograms(extent: Extent, holograms: List<Pair<UUID, List<HologramTextLine>>>) {
+    fun setHolograms(extent: Extent, holograms: List<Hologram>) {
         val hologramsNode = getHologramsNode(extent)
         hologramsNode.value = null //Clear
         holograms.forEach { hologram ->
-            HologramSerializer.serialize(hologram.second, hologramsNode.getNode(hologram.first))
+            HologramSerializer.serialize(hologram, hologramsNode.getNode(hologram.uuid))
         }
         configLoader.save(hologramsNode.parent.parent)
     }
