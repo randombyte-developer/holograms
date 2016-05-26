@@ -30,7 +30,7 @@ object Hologram {
         })
     }
 
-    fun remove(world: World, uuid: UUID) {
+    fun delete(world: World, uuid: UUID) {
         ConfigManager.getHolograms(world).filter { it.first.equals(uuid) }.forEach { hologram ->
             hologram.second.forEach { line ->
                 world.getEntity(line.first).ifPresent { it.remove() }

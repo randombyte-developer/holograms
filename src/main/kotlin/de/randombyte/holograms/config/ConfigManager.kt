@@ -30,7 +30,7 @@ object ConfigManager {
         setHolograms(extent, getHolograms(extent).toMutableList() + Pair(UUID.randomUUID(), lines))
     }
 
-    fun removeHologram(extent: Extent, uuid: UUID) {
+    fun deleteHologram(extent: Extent, uuid: UUID) {
         val rest = getHolograms(extent).filterNot { it.first.equals(uuid) }
         setHolograms(extent, rest)
     }

@@ -21,8 +21,8 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor("de.randombyt
     companion object {
         fun sendHologramList(player: Player) {
             val hologramTextList = getHologramTextList(getNearbyHolograms(player, 10), deleteCallback = { hologramUUID ->
-                Hologram.remove(player.world, hologramUUID)
-                ConfigManager.removeHologram(player.world, hologramUUID)
+                Hologram.delete(player.world, hologramUUID)
+                ConfigManager.deleteHologram(player.world, hologramUUID)
                 player.sendMessage(Text.of(TextColors.YELLOW, "Hologram deleted!"))
                 sendHologramList(player) //Display new list
             })
