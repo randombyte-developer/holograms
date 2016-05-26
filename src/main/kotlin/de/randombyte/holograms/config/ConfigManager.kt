@@ -1,8 +1,8 @@
 package de.randombyte.holograms.config
 
+import de.randombyte.holograms.HologramTextLine
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
-import org.spongepowered.api.text.Text
 import org.spongepowered.api.world.extent.Extent
 import java.util.*
 
@@ -26,16 +26,16 @@ object ConfigManager {
     //Initialized in init phase of plugin
     lateinit var configLoader: ConfigurationLoader<CommentedConfigurationNode>
 
-    fun addHologram(extent: Extent, lines: List<Pair<UUID, Text>>) = setHolograms(extent, getHolograms(extent) + Pair(UUID.randomUUID(), lines))
+    fun addHologram(extent: Extent, lines: List<HologramTextLine>) = setHolograms(extent, getHolograms(extent) + Pair(UUID.randomUUID(), lines))
     fun deleteHologram(extent: Extent, uuid: UUID) = setHolograms(extent, getHolograms(extent).filterNot { it.first.equals(uuid) })
 
-    //List<Pair<hologramUUID, List<Pair<armorStandUUID, armorStandText>>>>
-    fun getHolograms(extent: Extent): List<Pair<UUID, List<Pair<UUID, Text>>>> =
+    //List<Pair<hologramUUID, List<HologramTextLine>>>
+    fun getHolograms(extent: Extent): List<Pair<UUID, List<HologramTextLine>>> =
             getHologramsNode(extent).childrenMap.map { hologramNode ->
                 UUID.fromString(hologramNode.key as String) to HologramSerializer.deserialize(hologramNode.value)
             }
 
-    fun setHolograms(extent: Extent, holograms: List<Pair<UUID, List<Pair<UUID, Text>>>>) {
+    fun setHolograms(extent: Extent, holograms: List<Pair<UUID, List<HologramTextLine>>>) {
         val hologramsNode = getHologramsNode(extent)
         hologramsNode.value = null //Clear
         holograms.forEach { hologram ->

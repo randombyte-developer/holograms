@@ -18,7 +18,7 @@ object Hologram {
 
     const val MULTI_LINE_SPACE = 0.3
 
-    fun spawn(texts: List<Text>, location: Location<World>): Optional<List<Pair<UUID, Text>>> {
+    fun spawn(texts: List<Text>, location: Location<World>): Optional<List<HologramTextLine>> {
         val topPosition = location.position.add(0.0, texts.size * MULTI_LINE_SPACE, 0.0)
         return Optional.of(texts.mapIndexed { i, text ->
             val optArmorStand = location.extent.createEntity(EntityTypes.ARMOR_STAND, topPosition.sub(0.0, i * MULTI_LINE_SPACE, 0.0))
@@ -26,14 +26,14 @@ object Hologram {
             val armorStand = optArmorStand.get()
             if (!location.extent.spawnEntity(armorStand, Holograms.PLUGIN_SPAWN_CAUSE)) return Optional.empty()
             prepare(armorStand, text)
-            return@mapIndexed armorStand.uniqueId to text
+            return@mapIndexed HologramTextLine(armorStand.uniqueId, text)
         })
     }
 
     fun delete(world: World, uuid: UUID) {
         ConfigManager.getHolograms(world).filter { it.first.equals(uuid) }.forEach { hologram ->
             hologram.second.forEach { line ->
-                world.getEntity(line.first).ifPresent { it.remove() }
+                world.getEntity(line.armorStandUUID).ifPresent { it.remove() }
             }
         }
     }
