@@ -27,11 +27,10 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor("de.randombyt
                 sendHologramList(player) //Display new list
             })
             if (hologramTextList.size > 0) {
-                Sponge.getServiceManager().provide(PaginationService::class.java).ifPresent {
-                    it.builder()
-                            .header(Text.of(TextColors.GREEN, "In 10 blocks range nearby Holograms:"))
-                            .contents(hologramTextList)
-                            .sendTo(player)
+                Sponge.getServiceManager().provide(PaginationService::class.java).ifPresent { it.builder()
+                        .header(Text.of(TextColors.GREEN, "In 10 blocks range nearby Holograms:"))
+                        .contents(hologramTextList)
+                        .sendTo(player)
                 }
             } else {
                 player.sendMessage(Text.of(TextColors.YELLOW, "No Holograms in 10 blocks range!"))
