@@ -1,4 +1,4 @@
-package de.randombyte.holograms.config.serializer
+package de.randombyte.holograms.config
 
 import com.google.common.reflect.TypeToken
 import ninja.leaping.configurate.ConfigurationNode

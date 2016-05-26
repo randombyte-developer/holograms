@@ -1,6 +1,5 @@
 package de.randombyte.holograms.config
 
-import de.randombyte.holograms.config.serializer.HologramSerializer
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
 import org.spongepowered.api.text.Text
