@@ -58,8 +58,11 @@ class Holograms @Inject constructor(val logger: Logger,
                         .description(Text.of("Creates a Hologram with multiple lines pre-configured in the config file."))
                         .build(), "createMultiLine", "cml")
                 .child(CommandSpec.builder()
+                        .arguments(GenericArguments.optional(GenericArguments.integer(Text.of("maxDistance"))))
                         .executor(ListNearbyHologramsCommand())
-                        .description(Text.of("Lists nearby Holograms to delete them."))
+                        .description(Text.of("Lists nearby Holograms to delete or move them."))
+                        .extendedDescription(Text.of("A number can be added to the command to specify in which " +
+                                "radius Holograms will be listed."))
                         .build(), "list")
                 .child(CommandSpec.builder()
                         .executor(UpdateHologramsCommand())

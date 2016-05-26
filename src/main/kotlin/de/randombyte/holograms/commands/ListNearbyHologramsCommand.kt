@@ -15,13 +15,14 @@ import java.util.*
 
 class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOLOGRAMS_PERMISSION) {
     override fun executedWithPermission(player: Player, args: CommandContext): CommandResult {
-        sendHologramList(player)
+        val optMaxDistance = args.getOne<Int>("maxDistance")
+        if (optMaxDistance.isPresent) sendHologramList(player, optMaxDistance.get()) else sendHologramList(player)
         return CommandResult.success()
     }
 
     companion object {
-        private fun sendHologramList(player: Player) {
-            val hologramTextList = getHologramTextList(getNearbyHolograms(player, 10), moveCallback = { hologramUUID ->
+        private fun sendHologramList(player: Player, maxDistance: Int = 10) {
+            val hologramTextList = getHologramTextList(getNearbyHolograms(player, maxDistance), moveCallback = { hologramUUID ->
                 ConfigManager.getHolograms(player.world).filter { it.uuid.equals(hologramUUID) }.forEach { hologram ->
                     val topLocation = Hologram.getHologramTopLocation(player.location, hologram.lines.size)
                     hologram.lines.forEachIndexed { i, line ->
@@ -37,12 +38,12 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
             })
             if (hologramTextList.size > 0) {
                 Sponge.getServiceManager().provide(PaginationService::class.java).ifPresent { it.builder()
-                        .header(Text.of(TextColors.GREEN, "In 10 blocks range nearby Holograms:"))
+                        .header(Text.of(TextColors.GREEN, "In $maxDistance blocks radius are these Holograms:"))
                         .contents(hologramTextList)
                         .sendTo(player)
                 }
             } else {
-                player.sendMessage(Text.of(TextColors.YELLOW, "No Holograms in 10 blocks range!"))
+                player.sendMessage(Text.of(TextColors.YELLOW, "No Holograms in $maxDistance blocks radius!"))
             }
         }
 
