@@ -21,7 +21,15 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
 
     companion object {
         private fun sendHologramList(player: Player) {
-            val hologramTextList = getHologramTextList(getNearbyHolograms(player, 10), deleteCallback = { hologramUUID ->
+            val hologramTextList = getHologramTextList(getNearbyHolograms(player, 10), moveCallback = { hologramUUID ->
+                ConfigManager.getHolograms(player.world).filter { it.uuid.equals(hologramUUID) }.forEach { hologram ->
+                    val topLocation = Hologram.getHologramTopLocation(player.location, hologram.lines.size)
+                    hologram.lines.forEachIndexed { i, line ->
+                        player.world.getEntity(line.armorStandUUID).ifPresent { it.location = topLocation.sub(0.0, i * Hologram.MULTI_LINE_SPACE, 0.0) }
+                    }
+                }
+                player.sendMessage(Text.of(TextColors.YELLOW, "Hologram moved!"))
+            }, deleteCallback = { hologramUUID ->
                 Hologram.delete(player.world, hologramUUID)
                 ConfigManager.deleteHologram(player.world, hologramUUID)
                 player.sendMessage(Text.of(TextColors.YELLOW, "Hologram deleted!"))
@@ -38,11 +46,16 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
             }
         }
 
-        private fun getHologramTextList(holograms: List<Hologram>, deleteCallback: (UUID) -> Unit) =
+        private fun getHologramTextList(holograms: List<Hologram>, moveCallback: (UUID) -> Unit,
+                                        deleteCallback: (UUID) -> Unit) =
                 holograms.map { hologram ->
                     Text.builder()
                             .append(Text.builder("- \"").append(hologram.lines.first().displayText).append(Text.of("\""))
                                     .onHover(TextActions.showText(Text.of(hologram.uuid.toString()))).build())
+                            .append(Text.builder(" [MOVE]")
+                                    .color(TextColors.YELLOW)
+                                    .onClick(TextActions.executeCallback { moveCallback.invoke(hologram.uuid) })
+                                    .build())
                             .append(Text.builder(" [DELETE]")
                                     .color(TextColors.RED)
                                     .onClick(TextActions.executeCallback { deleteCallback.invoke(hologram.uuid) })

@@ -19,9 +19,9 @@ class Hologram(val uuid: UUID, val lines: List<HologramTextLine>) {
         const val MULTI_LINE_SPACE = 0.3
 
         fun spawn(texts: List<Text>, location: Location<World>): Optional<Hologram> {
-            val topPosition = location.position.add(0.0, texts.size * MULTI_LINE_SPACE, 0.0)
+            val topLocation = getHologramTopLocation(location, texts.size)
             return Optional.of(Hologram(UUID.randomUUID(), texts.mapIndexed { i, text ->
-                val optArmorStand = location.extent.createEntity(EntityTypes.ARMOR_STAND, topPosition.sub(0.0, i * MULTI_LINE_SPACE, 0.0))
+                val optArmorStand = location.extent.createEntity(EntityTypes.ARMOR_STAND, topLocation.position.sub(0.0, i * MULTI_LINE_SPACE, 0.0))
                 if (!optArmorStand.isPresent) return Optional.empty()
                 val armorStand = optArmorStand.get()
                 if (!location.extent.spawnEntity(armorStand, Holograms.PLUGIN_SPAWN_CAUSE)) return Optional.empty()
@@ -50,6 +50,8 @@ class Hologram(val uuid: UUID, val lines: List<HologramTextLine>) {
 
             setInvisible(entity) //https://github.com/SpongePowered/SpongeAPI/issues/1151
         }
+
+        fun getHologramTopLocation(baseLocation: Location<World>, numberOfLines: Int) = baseLocation.add(0.0, numberOfLines * MULTI_LINE_SPACE, 0.0)
 
         private fun setMarker(entity: Entity) = setBooleanEntitydata(entity, "Marker", true)
         private fun setNoGravity(entity: Entity) = setBooleanEntitydata(entity, "NoGravity", true)
