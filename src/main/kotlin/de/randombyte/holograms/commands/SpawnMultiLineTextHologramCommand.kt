@@ -11,13 +11,11 @@ import org.spongepowered.api.text.Text
 class SpawnMultiLineTextHologramCommand : PermissionNeededCommandExecutor("de.randombyte.holograms") {
     override fun executedWithPermission(player: Player, args: CommandContext): CommandResult {
         val numberLines = args.getOne<Int>("numberOfLines").get()
-        val hologram = Hologram.spawn(textListOfSize(numberLines), player.location)
-        return if (hologram.isPresent) {
-            ConfigManager.addHologram(player.world, hologram.get())
-            CommandResult.success()
-        } else {
-            throw CommandException(Text.of("Couldn't spawn ArmorStand!"))
-        }
+        ConfigManager.addHologram(player.world,
+                Hologram.spawn(textListOfSize(numberLines), player.location).orElseThrow {
+                    CommandException(Text.of("Couldn't spawn ArmorStand!"))
+        })
+        return CommandResult.success()
     }
 
     fun textListOfSize(size: Int): List<Text> = (0..(size - 1)).map { Text.of("$it") }
