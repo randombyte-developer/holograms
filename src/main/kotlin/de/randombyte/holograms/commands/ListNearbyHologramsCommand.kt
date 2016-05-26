@@ -49,14 +49,12 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor("de.randombyt
                             .build()
                 }
 
-        fun getNearbyHolograms(player: Player, maxDistance: Int): List<Pair<UUID, List<Pair<UUID, Text>>>> {
-            return ConfigManager.getHolograms(player.world).filter { hologram ->
-                hologram.second.any { line ->
+        fun getNearbyHolograms(player: Player, maxDistance: Int): List<Pair<UUID, List<Pair<UUID, Text>>>> =
+                ConfigManager.getHolograms(player.world).filter { it.second.any { line ->
                     val optArmorStand = player.world.getEntity(line.first)
                     return@any optArmorStand.isPresent &&
                             optArmorStand.get().location.position.distance(player.location.position) < maxDistance
                 }
-            }
         }
     }
 }
