@@ -20,9 +20,5 @@ class SpawnMultiLineTextHologramCommand : PermissionNeededCommandExecutor("de.ra
         }
     }
 
-    fun textListOfSize(size: Int): List<Text> {
-        val list = mutableListOf<Text>()
-        (0..(size - 1)).forEach { list.add(Text.of("$it")) }
-        return list
-    }
+    fun textListOfSize(size: Int): List<Text> = (0..(size - 1)).map { Text.of("$it") }
 }
