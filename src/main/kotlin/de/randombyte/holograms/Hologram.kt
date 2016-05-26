@@ -68,7 +68,8 @@ object Hologram {
      * Executes a [command] as the server console. [pingBefore] defaults to true, which means that a command is
      * executed before the actual one(In this case "msg").
      * The bug report is [here](https://github.com/SpongePowered/SpongeCommon/issues/665).
-     */    fun executeCommand(command: String, pingBefore: Boolean = true): CommandResult {
+     */
+    fun executeCommand(command: String, pingBefore: Boolean = true): CommandResult {
         if (pingBefore) executeCommand("msg", false) //https://github.com/SpongePowered/SpongeCommon/issues/665
         return Sponge.getCommandManager().process(Sponge.getServer().console, command)
     }
