@@ -11,11 +11,9 @@ import org.spongepowered.api.text.format.TextColors
 
 class UpdateHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOLOGRAMS_PERMISSION) {
     override fun executedWithPermission(player: Player, args: CommandContext): CommandResult {
-        ConfigManager.getHolograms(player.world).forEach { hologram ->
-            hologram.second.forEach { line ->
-                player.world.getEntity(line.first).ifPresent { it.offer(Keys.DISPLAY_NAME, line.second) }
-            }
-        }
+        ConfigManager.getHolograms(player.world).forEach { it.second.forEach { line ->
+            player.world.getEntity(line.first).ifPresent { it.offer(Keys.DISPLAY_NAME, line.second) }
+        }}
         player.sendMessage(Text.of(TextColors.GREEN, "Updated Holograms!"))
         return CommandResult.success()
     }
