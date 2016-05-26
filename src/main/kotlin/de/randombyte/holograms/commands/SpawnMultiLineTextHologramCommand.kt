@@ -19,5 +19,5 @@ class SpawnMultiLineTextHologramCommand : PermissionNeededCommandExecutor(Hologr
         return CommandResult.success()
     }
 
-    fun textListOfSize(size: Int): List<Text> = (0..(size - 1)).map { Text.of("$it") }
+    private fun textListOfSize(size: Int): List<Text> = (0..(size - 1)).map { Text.of("$it") }
 }

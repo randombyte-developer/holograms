@@ -38,7 +38,7 @@ object Hologram {
         }
     }
 
-    fun prepare(entity: Entity, text: Text) {
+    private fun prepare(entity: Entity, text: Text) {
         entity.offer(Keys.DISPLAY_NAME, text)
         entity.offer(Keys.CUSTOM_NAME_VISIBLE, true)
 
@@ -51,25 +51,25 @@ object Hologram {
         setInvisible(entity) //https://github.com/SpongePowered/SpongeAPI/issues/1151
     }
 
-    fun setMarker(entity: Entity) = setBooleanEntitydata(entity, "Marker", true)
-    fun setNoGravity(entity: Entity) = setBooleanEntitydata(entity, "NoGravity", true)
+    private fun setMarker(entity: Entity) = setBooleanEntitydata(entity, "Marker", true)
+    private fun setNoGravity(entity: Entity) = setBooleanEntitydata(entity, "NoGravity", true)
 
     /**
      * [Keys.INVISIBLE] makes the entity completely gone, even in spectator mode, so I have to use this method to
      * hide the armor stand body. Must be called after spawning the entity.
      * https://github.com/SpongePowered/SpongeAPI/issues/1151
      */
-    fun setInvisible(entity: Entity) = setBooleanEntitydata(entity, "Invisible", true)
+    private fun setInvisible(entity: Entity) = setBooleanEntitydata(entity, "Invisible", true)
 
-    fun setBooleanEntitydata(entity: Entity, dataTag: String, active: Boolean) = setEntitydata(entity, "{$dataTag:${if (active) 1 else 0}b}")
-    fun setEntitydata(entity: Entity, data: String) = executeCommand("entitydata ${entity.uniqueId} $data")
+    private fun setBooleanEntitydata(entity: Entity, dataTag: String, active: Boolean) = setEntitydata(entity, "{$dataTag:${if (active) 1 else 0}b}")
+    private fun setEntitydata(entity: Entity, data: String) = executeCommand("entitydata ${entity.uniqueId} $data")
 
     /**
      * Executes a [command] as the server console. [pingBefore] defaults to true, which means that a command is
      * executed before the actual one(In this case "msg").
      * The bug report is [here](https://github.com/SpongePowered/SpongeCommon/issues/665).
      */
-    fun executeCommand(command: String, pingBefore: Boolean = true): CommandResult {
+    private fun executeCommand(command: String, pingBefore: Boolean = true): CommandResult {
         if (pingBefore) executeCommand("msg", false) //https://github.com/SpongePowered/SpongeCommon/issues/665
         return Sponge.getCommandManager().process(Sponge.getServer().console, command)
     }

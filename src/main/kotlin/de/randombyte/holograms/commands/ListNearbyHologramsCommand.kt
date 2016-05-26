@@ -20,7 +20,7 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
     }
 
     companion object {
-        fun sendHologramList(player: Player) {
+        private fun sendHologramList(player: Player) {
             val hologramTextList = getHologramTextList(getNearbyHolograms(player, 10), deleteCallback = { hologramUUID ->
                 Hologram.delete(player.world, hologramUUID)
                 ConfigManager.deleteHologram(player.world, hologramUUID)
@@ -38,7 +38,7 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
             }
         }
 
-        fun getHologramTextList(holograms: List<Pair<UUID, List<Pair<UUID, Text>>>>, deleteCallback: (UUID) -> Unit) =
+        private fun getHologramTextList(holograms: List<Pair<UUID, List<Pair<UUID, Text>>>>, deleteCallback: (UUID) -> Unit) =
                 holograms.map { hologram ->
                     Text.builder()
                             .append(Text.builder("- \"").append(hologram.second[0].second).append(Text.of("\""))
@@ -50,7 +50,7 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
                             .build()
                 }
 
-        fun getNearbyHolograms(player: Player, maxDistance: Int): List<Pair<UUID, List<Pair<UUID, Text>>>> =
+        private fun getNearbyHolograms(player: Player, maxDistance: Int): List<Pair<UUID, List<Pair<UUID, Text>>>> =
                 ConfigManager.getHolograms(player.world).filter { it.second.any { line ->
                     val optArmorStand = player.world.getEntity(line.first)
                     return@any optArmorStand.isPresent &&
