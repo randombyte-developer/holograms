@@ -26,7 +26,9 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
                 ConfigManager.getHolograms(player.world).filter { it.uuid.equals(hologramUUID) }.forEach { hologram ->
                     val topLocation = Hologram.getHologramTopLocation(player.location, hologram.lines.size)
                     hologram.lines.forEachIndexed { i, line ->
-                        player.world.getEntity(line.armorStandUUID).ifPresent { it.location = topLocation.sub(0.0, i * Hologram.MULTI_LINE_SPACE, 0.0) }
+                        player.world.getEntity(line.armorStandUUID).ifPresent {
+                            it.location = topLocation.sub(0.0, i * Hologram.MULTI_LINE_SPACE, 0.0)
+                        }
                     }
                 }
                 player.sendMessage(Text.of(TextColors.YELLOW, "Hologram moved!"))
@@ -38,7 +40,7 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
             })
             if (hologramTextList.size > 0) {
                 Sponge.getServiceManager().provide(PaginationService::class.java).ifPresent { it.builder()
-                        .header(Text.of(TextColors.GREEN, "In $maxDistance blocks radius are these Holograms:"))
+                        .header(getHeaderText(maxDistance))
                         .contents(hologramTextList)
                         .sendTo(player)
                 }
@@ -46,6 +48,11 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
                 player.sendMessage(Text.of(TextColors.YELLOW, "No Holograms in $maxDistance blocks radius!"))
             }
         }
+
+        private fun getHeaderText(radius: Int) = Text.builder()
+                .append(Text.builder("[CREATE]").color(TextColors.GREEN).onClick(TextActions.suggestCommand("/holograms create text")).build())
+                .append(Text.of(" | In radius $radius:"))
+                .build()
 
         private fun getHologramTextList(holograms: List<Hologram>, moveCallback: (UUID) -> Unit,
                                         deleteCallback: (UUID) -> Unit) =
