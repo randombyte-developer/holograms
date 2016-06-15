@@ -38,14 +38,11 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
                 player.sendMessage(Text.of(TextColors.YELLOW, "Hologram deleted!"))
                 sendHologramList(player) //Display new list
             })
-            if (hologramTextList.size > 0) {
-                Sponge.getServiceManager().provide(PaginationService::class.java).ifPresent { it.builder()
+            Sponge.getServiceManager().provide(PaginationService::class.java).ifPresent {
+                it.builder()
                         .header(getHeaderText(maxDistance))
                         .contents(hologramTextList)
                         .sendTo(player)
-                }
-            } else {
-                player.sendMessage(Text.of(TextColors.YELLOW, "No Holograms in $maxDistance blocks radius!"))
             }
         }
 
@@ -55,21 +52,20 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
                 .build()
 
         private fun getHologramTextList(holograms: List<Hologram>, moveCallback: (UUID) -> Unit,
-                                        deleteCallback: (UUID) -> Unit) =
-                holograms.map { hologram ->
-                    Text.builder()
-                            .append(Text.builder("- \"").append(hologram.lines.first().displayText).append(Text.of("\""))
-                                    .onHover(TextActions.showText(Text.of(hologram.uuid.toString()))).build())
-                            .append(Text.builder(" [MOVE]")
-                                    .color(TextColors.YELLOW)
-                                    .onClick(TextActions.executeCallback { moveCallback.invoke(hologram.uuid) })
-                                    .build())
-                            .append(Text.builder(" [DELETE]")
-                                    .color(TextColors.RED)
-                                    .onClick(TextActions.executeCallback { deleteCallback.invoke(hologram.uuid) })
-                                    .build())
-                            .build()
-                }
+                                        deleteCallback: (UUID) -> Unit) = holograms.map { hologram ->
+            Text.builder()
+                    .append(Text.builder("- \"").append(hologram.lines.first().displayText).append(Text.of("\""))
+                            .onHover(TextActions.showText(Text.of(hologram.uuid.toString()))).build())
+                    .append(Text.builder(" [MOVE]")
+                            .color(TextColors.YELLOW)
+                            .onClick(TextActions.executeCallback { moveCallback.invoke(hologram.uuid) })
+                            .build())
+                    .append(Text.builder(" [DELETE]")
+                            .color(TextColors.RED)
+                            .onClick(TextActions.executeCallback { deleteCallback.invoke(hologram.uuid) })
+                            .build())
+                    .build()
+        }
 
         private fun getNearbyHolograms(player: Player, maxDistance: Int): List<Hologram> =
                 ConfigManager.getHolograms(player.world).filter { it.lines.any { line ->
