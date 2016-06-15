@@ -32,6 +32,7 @@ class ListNearbyHologramsCommand : PermissionNeededCommandExecutor(Holograms.HOL
                     }
                 }
                 player.sendMessage(Text.of(TextColors.YELLOW, "Hologram moved!"))
+                sendHologramList(player, maxDistance)
             }, deleteCallback = { hologramUUID ->
                 Hologram.delete(player.world, hologramUUID)
                 ConfigManager.deleteHologram(player.world, hologramUUID)
