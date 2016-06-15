@@ -1,10 +1,7 @@
 package de.randombyte.holograms
 
 import com.google.inject.Inject
-import de.randombyte.holograms.commands.ListNearbyHologramsCommand
-import de.randombyte.holograms.commands.SpawnMultiLineTextHologramCommand
-import de.randombyte.holograms.commands.SpawnTextHologramCommand
-import de.randombyte.holograms.commands.UpdateHologramsCommand
+import de.randombyte.holograms.commands.*
 import de.randombyte.holograms.config.ConfigManager
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
@@ -75,6 +72,11 @@ class Holograms @Inject constructor(val logger: Logger,
                         .executor(UpdateHologramsCommand())
                         .description(Text.of("Updates Holograms in players world to the values of the config file."))
                         .build(), "update")
+                .child(CommandSpec.builder()
+                        .permission(HOLOGRAMS_PERMISSION)
+                        .executor(ForceDeleteArmorStandsCommand())
+                        .description(Text.of("Deletes every ArmorStand(e.g. lost Holograms) in a 2 block radius."))
+                        .build(), "force-delete")
                 .build(), "holograms")
 
         logger.info("$NAME loaded: $VERSION")
