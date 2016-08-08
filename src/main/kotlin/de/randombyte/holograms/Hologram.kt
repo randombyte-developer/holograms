@@ -50,7 +50,8 @@ class Hologram(val uuid: UUID, val lines: List<HologramTextLine>) {
             setInvisible(entity) //https://github.com/SpongePowered/SpongeAPI/issues/1151
         }
 
-        fun getHologramTopLocation(baseLocation: Location<World>, numberOfLines: Int) = baseLocation.add(0.0, numberOfLines * MULTI_LINE_SPACE, 0.0)
+        fun getHologramTopLocation(baseLocation: Location<World>, numberOfLines: Int): Location<World> =
+                baseLocation.add(0.0, numberOfLines * MULTI_LINE_SPACE, 0.0)
 
         private fun setMarker(entity: Entity) = setBooleanEntitydata(entity, "Marker", true)
         private fun setNoGravity(entity: Entity) = setBooleanEntitydata(entity, "NoGravity", true)
