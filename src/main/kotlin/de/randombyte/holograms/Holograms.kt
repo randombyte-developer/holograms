@@ -1,7 +1,10 @@
 package de.randombyte.holograms
 
 import com.google.inject.Inject
-import de.randombyte.holograms.commands.*
+import de.randombyte.holograms.commands.ForceDeleteArmorStandsCommand
+import de.randombyte.holograms.commands.ListNearbyHologramsCommand
+import de.randombyte.holograms.commands.SpawnMultiLineTextHologramCommand
+import de.randombyte.holograms.commands.SpawnTextHologramCommand
 import de.randombyte.holograms.config.ConfigManager
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
@@ -10,10 +13,12 @@ import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.args.GenericArguments
 import org.spongepowered.api.command.spec.CommandSpec
 import org.spongepowered.api.config.DefaultConfig
+import org.spongepowered.api.data.key.Keys
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.cause.Cause
 import org.spongepowered.api.event.cause.entity.spawn.SpawnCause
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes
+import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.plugin.Plugin
 import org.spongepowered.api.text.Text
@@ -69,16 +74,22 @@ class Holograms @Inject constructor(val logger: Logger,
                         .build(), "list")
                 .child(CommandSpec.builder()
                         .permission(HOLOGRAMS_PERMISSION)
-                        .executor(UpdateHologramsCommand())
-                        .description(Text.of("Updates Holograms in players world to the values of the config file."))
-                        .build(), "update")
-                .child(CommandSpec.builder()
-                        .permission(HOLOGRAMS_PERMISSION)
                         .executor(ForceDeleteArmorStandsCommand())
                         .description(Text.of("Deletes every ArmorStand(e.g. lost Holograms) in a 2 block radius."))
                         .build(), "force-delete")
                 .build(), "holograms")
 
         logger.info("$NAME loaded: $VERSION")
+    }
+
+    @Listener
+    fun onReload(event: GameReloadEvent) {
+        Sponge.getServer().worlds.forEach { world ->
+            ConfigManager.getHolograms(world).forEach { armorStand ->
+                armorStand.lines.forEach { line ->
+                    world.getEntity(line.armorStandUUID).ifPresent { it.offer(Keys.DISPLAY_NAME, line.displayText) }
+                }
+            }
+        }
     }
 }
