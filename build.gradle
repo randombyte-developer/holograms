@@ -21,7 +21,7 @@ configurations {
     compile.extendsFrom shade
 }
 
-ext.spongeApiVersion = '4.1.0'
+ext.spongeApiVersion = '5.0.0-SNAPSHOT'
 ext.kotlinVersion = '1.0.3'
 
 dependencies {
