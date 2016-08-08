@@ -2,8 +2,6 @@ package de.randombyte.holograms
 
 import de.randombyte.holograms.Hologram.Companion.spawn
 import de.randombyte.holograms.config.ConfigManager
-import org.spongepowered.api.Sponge
-import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.data.key.Keys
 import org.spongepowered.api.entity.Entity
 import org.spongepowered.api.entity.EntityTypes
@@ -40,35 +38,12 @@ class Hologram(val uuid: UUID, val lines: List<HologramTextLine>) {
         private fun prepare(armorStand: Entity, text: Text) {
             armorStand.offer(Keys.DISPLAY_NAME, text)
             armorStand.offer(Keys.CUSTOM_NAME_VISIBLE, true)
-
             armorStand.offer(Keys.ARMOR_STAND_HAS_GRAVITY, false)
-
             armorStand.offer(Keys.ARMOR_STAND_MARKER, true)
-
-            setInvisible(armorStand) //https://github.com/SpongePowered/SpongeAPI/issues/1151
+            armorStand.offer(Keys.INVISIBLE, true)
         }
 
         fun getHologramTopLocation(baseLocation: Location<World>, numberOfLines: Int): Location<World> =
                 baseLocation.add(0.0, numberOfLines * MULTI_LINE_SPACE, 0.0)
-
-        /**
-         * [Keys.INVISIBLE] makes the armorStand completely gone, even in spectator mode, so I have to use this method to
-         * hide the armor stand body. Must be called after spawning the armorStand.
-         * https://github.com/SpongePowered/SpongeAPI/issues/1151
-         */
-        private fun setInvisible(entity: Entity) = setBooleanEntitydata(entity, "Invisible", true)
-
-        private fun setBooleanEntitydata(entity: Entity, dataTag: String, active: Boolean) = setEntitydata(entity, "{$dataTag:${if (active) 1 else 0}b}")
-        private fun setEntitydata(entity: Entity, data: String) = executeCommand("entitydata ${entity.uniqueId} $data")
-
-        /**
-         * Executes a [command] as the server console. [pingBefore] defaults to true, which means that a command is
-         * executed before the actual one(In this case "msg").
-         * The bug report is [here](https://github.com/SpongePowered/SpongeCommon/issues/665).
-         */
-        private fun executeCommand(command: String, pingBefore: Boolean = true): CommandResult {
-            if (pingBefore) executeCommand("msg", false) //https://github.com/SpongePowered/SpongeCommon/issues/665
-            return Sponge.getCommandManager().process(Sponge.getServer().console, command)
-        }
     }
 }
