@@ -30,7 +30,7 @@ class Holograms @Inject constructor(val logger: Logger,
     companion object {
         const val NAME = "Holograms"
         const val ID = "de.randombyte.holograms"
-        const val VERSION = "v1.0.1"
+        const val VERSION = "v1.1"
         const val AUTHOR = "RandomByte"
 
         const val HOLOGRAMS_PERMISSION = "de.randombyte.holograms"
