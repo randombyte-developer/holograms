@@ -37,28 +37,23 @@ class Hologram(val uuid: UUID, val lines: List<HologramTextLine>) {
             }
         }
 
-        private fun prepare(entity: Entity, text: Text) {
-            entity.offer(Keys.DISPLAY_NAME, text)
-            entity.offer(Keys.CUSTOM_NAME_VISIBLE, true)
+        private fun prepare(armorStand: Entity, text: Text) {
+            armorStand.offer(Keys.DISPLAY_NAME, text)
+            armorStand.offer(Keys.CUSTOM_NAME_VISIBLE, true)
 
-            //armorStand.offer(Keys.ARMOR_STAND_HAS_GRAVITY, false)
-            setNoGravity(entity) //waiting for bleeding merged into master
+            armorStand.offer(Keys.ARMOR_STAND_HAS_GRAVITY, false)
 
-            //armorStand.offer(Keys.ARMOR_STAND_MARKER, true)
-            setMarker(entity)//waiting for bleeding merged into master
+            armorStand.offer(Keys.ARMOR_STAND_MARKER, true)
 
-            setInvisible(entity) //https://github.com/SpongePowered/SpongeAPI/issues/1151
+            setInvisible(armorStand) //https://github.com/SpongePowered/SpongeAPI/issues/1151
         }
 
         fun getHologramTopLocation(baseLocation: Location<World>, numberOfLines: Int): Location<World> =
                 baseLocation.add(0.0, numberOfLines * MULTI_LINE_SPACE, 0.0)
 
-        private fun setMarker(entity: Entity) = setBooleanEntitydata(entity, "Marker", true)
-        private fun setNoGravity(entity: Entity) = setBooleanEntitydata(entity, "NoGravity", true)
-
         /**
-         * [Keys.INVISIBLE] makes the entity completely gone, even in spectator mode, so I have to use this method to
-         * hide the armor stand body. Must be called after spawning the entity.
+         * [Keys.INVISIBLE] makes the armorStand completely gone, even in spectator mode, so I have to use this method to
+         * hide the armor stand body. Must be called after spawning the armorStand.
          * https://github.com/SpongePowered/SpongeAPI/issues/1151
          */
         private fun setInvisible(entity: Entity) = setBooleanEntitydata(entity, "Invisible", true)
