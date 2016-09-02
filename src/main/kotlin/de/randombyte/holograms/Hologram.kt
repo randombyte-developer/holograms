@@ -20,7 +20,9 @@ class Hologram(val uuid: UUID, val lines: List<HologramTextLine>) {
         fun spawn(texts: List<Text>, location: Location<World>): Optional<Hologram> {
             val topLocation = getHologramTopLocation(location, texts.size)
             return Optional.of(Hologram(UUID.randomUUID(), texts.mapIndexed { i, text ->
-                val armorStand = location.extent.createEntity(EntityTypes.ARMOR_STAND, topLocation.position.sub(0.0, i * MULTI_LINE_SPACE, 0.0))
+                val optArmorStand = location.extent.createEntity(EntityTypes.ARMOR_STAND, topLocation.position.sub(0.0, i * MULTI_LINE_SPACE, 0.0))
+                if (!optArmorStand.isPresent) return Optional.empty()
+                val armorStand = optArmorStand.get()
                 if (!location.extent.spawnEntity(armorStand, Holograms.PLUGIN_SPAWN_CAUSE)) return Optional.empty()
                 prepare(armorStand, text)
                 return@mapIndexed HologramTextLine(armorStand.uniqueId, text)
