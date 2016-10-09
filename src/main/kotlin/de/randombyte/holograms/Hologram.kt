@@ -38,7 +38,7 @@ class Hologram(val uuid: UUID, val lines: List<HologramTextLine>) {
         private fun prepare(armorStand: Entity, text: Text) {
             armorStand.offer(Keys.DISPLAY_NAME, text)
             armorStand.offer(Keys.CUSTOM_NAME_VISIBLE, true)
-            armorStand.offer(Keys.ARMOR_STAND_HAS_GRAVITY, false)
+            armorStand.offer(Keys.HAS_GRAVITY, false)
             armorStand.offer(Keys.ARMOR_STAND_MARKER, true)
             armorStand.offer(Keys.INVISIBLE, true)
         }
