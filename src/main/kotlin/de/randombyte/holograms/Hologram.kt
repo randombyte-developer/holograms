@@ -5,6 +5,7 @@ import de.randombyte.holograms.config.ConfigManager
 import org.spongepowered.api.data.key.Keys
 import org.spongepowered.api.entity.Entity
 import org.spongepowered.api.entity.EntityTypes
+import org.spongepowered.api.scheduler.Task
 import org.spongepowered.api.text.Text
 import org.spongepowered.api.world.Location
 import org.spongepowered.api.world.World
@@ -42,7 +43,9 @@ class Hologram(val uuid: UUID, val lines: List<HologramTextLine>) {
             armorStand.offer(Keys.CUSTOM_NAME_VISIBLE, true)
             armorStand.offer(Keys.ARMOR_STAND_HAS_GRAVITY, false)
             armorStand.offer(Keys.ARMOR_STAND_MARKER, true)
-            armorStand.offer(Keys.INVISIBLE, true)
+            // Workaround: Delaying invisibility is needed for the text to be visible after a client-
+            // reconnect. Without the delay the server would have to be restarted.
+            Task.builder().delayTicks(1).execute { -> armorStand.offer(Keys.INVISIBLE, true) }.submit(Holograms.PLUGIN)
         }
 
         fun getHologramTopLocation(baseLocation: Location<World>, numberOfLines: Int): Location<World> =

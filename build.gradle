@@ -1,10 +1,10 @@
 plugins {
-    id "com.zoltu.kotlin" version "1.0.3"
-    id "com.qixalite.spongestart" version "1.4.9"
+    id "com.zoltu.kotlin" version "1.0.4"
+    id "com.qixalite.spongestart" version "1.5.2"
 }
 
 group "de.randombyte"
-version "v1.1.2"
+version "v1.1.3"
 
 repositories {
     jcenter()
@@ -14,7 +14,7 @@ repositories {
 
 spongestart {
     eula true
-    spongeVanillaBuild "348 "
+    spongeVanillaBuild "352"
 }
 
 configurations {
@@ -23,7 +23,7 @@ configurations {
 }
 
 ext.spongeApiVersion = '4.1.0'
-ext.kotlinVersion = '1.0.3'
+ext.kotlinVersion = '1.0.4'
 
 dependencies {
     shade "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"

@@ -29,18 +29,20 @@ class Holograms @Inject constructor(val logger: Logger,
 
     companion object {
         const val NAME = "Holograms"
-        const val ID = "de.randombyte.holograms"
-        const val VERSION = "v1.1.2"
+        const val ID = "holograms"
+        const val VERSION = "v1.1.3"
         const val AUTHOR = "RandomByte"
 
-        const val HOLOGRAMS_PERMISSION = "de.randombyte.holograms"
+        const val HOLOGRAMS_PERMISSION = "holograms"
 
         lateinit var PLUGIN_SPAWN_CAUSE: Cause
         lateinit var LOGGER: Logger
+        lateinit var PLUGIN: Holograms
     }
 
     init {
         Companion.LOGGER = logger
+        Companion.PLUGIN = this
     }
 
     @Listener
