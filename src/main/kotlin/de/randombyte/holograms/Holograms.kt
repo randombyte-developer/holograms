@@ -7,7 +7,7 @@ import de.randombyte.holograms.commands.SpawnMultiLineTextHologramCommand
 import de.randombyte.holograms.commands.SpawnTextHologramCommand
 import de.randombyte.holograms.config.Config
 import de.randombyte.kosp.config.ConfigManager
-import de.randombyte.kosp.value
+import de.randombyte.kosp.extensions.orNull
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
 import org.slf4j.Logger
@@ -32,7 +32,7 @@ class Holograms @Inject constructor(logger: Logger,
     companion object {
         const val NAME = "Holograms"
         const val ID = "holograms"
-        const val VERSION = "v2.0"
+        const val VERSION = "v2.0.1"
         const val AUTHOR = "RandomByte"
 
         const val HOLOGRAMS_PERMISSION = "holograms"
@@ -41,7 +41,7 @@ class Holograms @Inject constructor(logger: Logger,
         lateinit var LOGGER: Logger
     }
 
-    val configManager = ConfigManager(configLoader, Config::class.java)
+    val configManager = ConfigManager(configLoader, Config::class)
 
     init {
         Companion.LOGGER = logger
@@ -96,7 +96,7 @@ class Holograms @Inject constructor(logger: Logger,
         val config = configManager.get()
         Sponge.getServer().worlds.forEach { world ->
             config.worlds[world.uniqueId]?.holograms?.forEach { hologram ->
-                world.getEntity(hologram.key).value()?.offer(Keys.DISPLAY_NAME, hologram.value.text)
+                world.getEntity(hologram.key).orNull()?.offer(Keys.DISPLAY_NAME, hologram.value.text)
             }
         }
     }

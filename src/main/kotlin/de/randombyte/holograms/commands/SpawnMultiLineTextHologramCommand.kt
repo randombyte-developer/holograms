@@ -4,7 +4,7 @@ import de.randombyte.holograms.Hologram
 import de.randombyte.holograms.config.Config
 import de.randombyte.kosp.PlayerExecutedCommand
 import de.randombyte.kosp.config.ConfigManager
-import de.randombyte.kosp.green
+import de.randombyte.kosp.extensions.green
 import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
