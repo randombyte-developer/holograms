@@ -26,7 +26,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile "org.spongepowered:spongeapi:$spongeApiVersion"
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
-    compile "com.github.randombyte-developer.kosp:kosp:v0.3.8"
+    compile "com.github.randombyte-developer.kosp:kosp:v0.3.9.1"
+    compile project("holograms-api")
 }
 
 shadowJar {

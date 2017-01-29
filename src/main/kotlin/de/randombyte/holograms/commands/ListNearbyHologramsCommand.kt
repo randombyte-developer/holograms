@@ -1,21 +1,21 @@
 package de.randombyte.holograms.commands
 
-import de.randombyte.holograms.Hologram
-import de.randombyte.holograms.config.Config
+import de.randombyte.holograms.Holograms
+import de.randombyte.holograms.api.HologramsService
+import de.randombyte.holograms.api.HologramsService.Hologram
 import de.randombyte.kosp.PlayerExecutedCommand
 import de.randombyte.kosp.ServiceUtils
-import de.randombyte.kosp.config.ConfigManager
 import de.randombyte.kosp.extensions.*
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
-import org.spongepowered.api.entity.Entity
 import org.spongepowered.api.entity.living.player.Player
+import org.spongepowered.api.scheduler.Task
 import org.spongepowered.api.service.pagination.PaginationService
 import org.spongepowered.api.text.Text
-import org.spongepowered.api.text.action.TextActions
-import java.util.*
+import org.spongepowered.api.text.action.TextActions.executeCallback
+import org.spongepowered.api.text.action.TextActions.suggestCommand
 
-class ListNearbyHologramsCommand(val configManager: ConfigManager<Config>) : PlayerExecutedCommand() {
+class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecutedCommand() {
     companion object {
         const val DEFAULT_DISTANCE = 10
     }
@@ -27,56 +27,59 @@ class ListNearbyHologramsCommand(val configManager: ConfigManager<Config>) : Pla
     }
 
     private fun sendHologramList(player: Player, maxDistance: Int) {
-        val nearbyHolograms = getNearbyHolograms(player, maxDistance)
+        val nearbyHolograms = ServiceUtils.getServiceOrFail(HologramsService::class).getHolograms(player.location, maxDistance.toDouble())
 
-        val hologramTextList = getHologramTextList(nearbyHolograms,moveCallback = { hologramUUID ->
-            player.world.getEntity(hologramUUID).orNull()?.location = player.location
-            player.sendMessage("Hologram moved!".yellow())
-            sendHologramList(player, maxDistance) // Display refreshed list
-        }, deleteCallback = { hologramUUID ->
-            player.world.getEntity(hologramUUID).orNull()?.remove()
-            val newConfig = configManager.get().deleteHologram(hologramUUID, player.world.uniqueId)
-            configManager.save(newConfig)
-            player.sendMessage("Hologram deleted!".yellow())
-            sendHologramList(player, maxDistance) // Display refreshed list
-        })
+        fun Hologram.checkIfExists(player: Player): Boolean {
+            val exists = doesExist()
+            if (!exists) player.sendMessage("Hologram does not exist!".red())
+            return exists
+        }
 
-        ServiceUtils.getServiceOrFail(PaginationService::class, "Could not load PaginationService!").builder()
+        val hologramTextList = getHologramTextList(nearbyHolograms,
+                teleportCallback = { hologram ->
+                    if (hologram.checkIfExists(player)) {
+                        player.location = hologram.getLocation()
+                        player.sendMessage("Teleported to Hologram!".yellow())
+                    }
+                },
+                moveCallback = { hologram ->
+                    if (hologram.checkIfExists(player)) {
+                        hologram.setLocation(player.location)
+                        player.sendMessage("Hologram moved!".yellow())
+                    }
+
+                    sendHologramList(player, maxDistance) // Display refreshed list
+                },
+                deleteCallback = { hologram ->
+                    if (hologram.checkIfExists(player)) {
+                        hologram.remove()
+                        player.sendMessage("Hologram removed!".yellow())
+                    }
+
+                    // Delay displaying the Holograms to allow the game to remove the deleted Hologram
+                    Task.builder().delayTicks(5).execute { ->
+                        sendHologramList(player, maxDistance) // Display refreshed list
+                    }.submit(pluginInstance)
+                }
+        )
+
+        ServiceUtils.getServiceOrFail(PaginationService::class).builder()
                 .title(getHeaderText(maxDistance))
                 .contents(hologramTextList)
                 .sendTo(player)
         }
 
-    private fun getHeaderText(radius: Int) =
-            "[CREATE]".green().action(TextActions.suggestCommand("/holograms create text")) + " | In radius $radius:"
+    private fun getHeaderText(radius: Int) = "[CREATE]".green().action(suggestCommand("/holograms create text")) + " | In radius $radius:"
 
-    private fun getHologramTextList(hologramsDistances: Map<Hologram, Int>, moveCallback: (UUID) -> Unit,
-                                    deleteCallback: (UUID) -> Unit): List<Text> = hologramsDistances.map {
-        val shortenedPlainText = it.key.text.toPlain().limit(8)
-        val uuid = it.key.armorStandUUID
-        val shortenedUUIDText = uuid.toString().limit(8) + "..."
-        val uuidText = uuid.toString().toText()
-
-        "- \"$shortenedPlainText\" ".toText() +
-                "UUID: $shortenedUUIDText".action(TextActions.showText(uuidText)) +
-                " [MOVE]".yellow().action(TextActions.executeCallback { moveCallback.invoke(uuid) }) +
-                " [DELETE]".red().action(TextActions.executeCallback { deleteCallback.invoke(uuid) })
-    }
-
-    /**
-     * @return nearby holograms between [player] and [maxDistance] mapped to its distance to the [player]
-     */
-    private fun getNearbyHolograms(player: Player, maxDistance: Int): Map<Hologram, Int> {
-        fun Entity.distanceTo(other: Entity) = location.position.distance(other.location.position)
-        val playersExtent = player.location.extent
-
-        val configHolograms = configManager.get().worlds[playersExtent.uniqueId]?.holograms ?: return emptyMap()
-        val hologramEntities = configHolograms.mapNotNull { playersExtent.getEntity(it.key).orNull() }
-        val hologramsDistances = hologramEntities.map { it to it.distanceTo(player) }
-        val nearbyHolograms = hologramsDistances.filter { it.second < maxDistance }
-
-        return nearbyHolograms.mapNotNull {
-            (Hologram.fromArmorStand(it.first) ?: return@mapNotNull null) to it.second.toInt()
-        }.toMap()
+    private fun getHologramTextList(hologramsDistances: List<Pair<Hologram, Double>>,
+                                    teleportCallback: (Hologram) -> Unit,
+                                    moveCallback: (Hologram) -> Unit,
+                                    deleteCallback: (Hologram) -> Unit): List<Text> = hologramsDistances.map { entry ->
+        val hologram = entry.first
+        val shortenedPlainText = hologram.getText().toPlain().limit(8)
+        "- \"$shortenedPlainText\" | Distance: ${entry.second.toInt()} |".toText() +
+                " [TELEPORT] ".yellow().action(executeCallback { teleportCallback(hologram) }) +
+                " [MOVE]".yellow().action(executeCallback { moveCallback(hologram) }) +
+                " [DELETE]".red().action(executeCallback { deleteCallback(hologram) })
     }
 }

@@ -1,0 +1,20 @@
+apply plugin: "com.zoltu.kotlin"
+
+group "de.randombyte"
+version "v1.0"
+
+repositories {
+    jcenter()
+    maven { url "https://repo.spongepowered.org/maven/" }
+    maven { url "https://jitpack.io" }
+}
+
+ext.spongeApiVersion = "5.0.0"
+ext.kotlinVersion = "1.0.6"
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.spongepowered:spongeapi:$spongeApiVersion"
+    kapt "org.spongepowered:spongeapi:$spongeApiVersion"
+}

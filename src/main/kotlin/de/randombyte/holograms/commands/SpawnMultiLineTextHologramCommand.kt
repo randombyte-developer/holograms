@@ -1,31 +1,35 @@
 package de.randombyte.holograms.commands
 
-import de.randombyte.holograms.Hologram
-import de.randombyte.holograms.config.Config
+import de.randombyte.holograms.api.HologramsService
 import de.randombyte.kosp.PlayerExecutedCommand
-import de.randombyte.kosp.config.ConfigManager
+import de.randombyte.kosp.ServiceUtils
 import de.randombyte.kosp.extensions.green
-import org.spongepowered.api.command.CommandException
+import de.randombyte.kosp.extensions.orNull
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.text.Text
+import org.spongepowered.api.text.serializer.TextSerializers
 
-class SpawnMultiLineTextHologramCommand(val configManager: ConfigManager<Config>) : PlayerExecutedCommand() {
+class SpawnMultiLineTextHologramCommand : PlayerExecutedCommand() {
+    companion object {
+        const val SEPARATOR = "%"
+    }
+
     override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
-        val numberLines = args.getOne<Int>("numberOfLines").get()
-        val holograms = Hologram.spawn(textListOfSize(numberLines), player.location) ?:
-                throw CommandException(Text.of("Couldn't spawn ArmorStand!"))
+        // One of these two parameters is definitely not null
+        val numberLines = args.getOne<Int>("numberOfLines").orNull()
+        val textsString = args.getOne<String>("texts").orNull()
 
-        val newConfig = configManager.get().apply {
-            holograms.forEach {
-                addHologram(it, player.location.extent.uniqueId)
-            }
+        val texts = if (numberLines != null) textListOfSize(numberLines) else {
+            textsString!!.split(SEPARATOR).map { TextSerializers.FORMATTING_CODE.deserialize(it) }
         }
-        configManager.save(newConfig)
+
+        ServiceUtils.getServiceOrFail(HologramsService::class).createMultilineHologram(player.location, texts)
+
         player.sendMessage("Holograms created!".green())
 
-        return CommandResult.successCount(numberLines)
+        return CommandResult.successCount(texts.size)
     }
 
     private fun textListOfSize(size: Int): List<Text> = (0..(size - 1)).map { Text.of(it) }
