@@ -18,6 +18,7 @@ import org.spongepowered.api.text.action.TextActions.suggestCommand
 class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecutedCommand() {
     companion object {
         const val DEFAULT_DISTANCE = 10
+        const val CHAT_MAX_LINES_SEEN = 20
     }
 
     override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
@@ -26,7 +27,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
         return CommandResult.success()
     }
 
-    private fun sendHologramList(player: Player, maxDistance: Int) {
+    private fun sendHologramList(player: Player, maxDistance: Int, statusMessageWasSentBefore: Boolean = false) {
         val nearbyHolograms = ServiceUtils.getServiceOrFail(HologramsService::class).getHolograms(player.location, maxDistance.toDouble())
 
         fun Hologram.checkIfExists(player: Player): Boolean {
@@ -38,17 +39,17 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
         val hologramTextList = getHologramTextList(nearbyHolograms,
                 teleportCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
-                        player.location = hologram.getLocation()
+                        player.location = hologram.location
                         player.sendMessage("Teleported to Hologram!".yellow())
                     }
+                    sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
                 moveCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
-                        hologram.setLocation(player.location)
+                        hologram.location = player.location
                         player.sendMessage("Hologram moved!".yellow())
                     }
-
-                    sendHologramList(player, maxDistance) // Display refreshed list
+                    sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
                 deleteCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
@@ -57,13 +58,18 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                     }
 
                     // Delay displaying the Holograms to allow the game to remove the deleted Hologram
-                    Task.builder().delayTicks(5).execute { ->
-                        sendHologramList(player, maxDistance) // Display refreshed list
+                    Task.builder().delayTicks(1).execute { ->
+                        sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                     }.submit(pluginInstance)
                 }
         )
 
+        val linesPerPage = if (statusMessageWasSentBefore) CHAT_MAX_LINES_SEEN - 1 else {
+            player.sendMessage(Text.EMPTY) // clear line above the following list
+            CHAT_MAX_LINES_SEEN
+        }
         ServiceUtils.getServiceOrFail(PaginationService::class).builder()
+                .linesPerPage(linesPerPage)
                 .title(getHeaderText(maxDistance))
                 .contents(hologramTextList)
                 .sendTo(player)
@@ -76,7 +82,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                                     moveCallback: (Hologram) -> Unit,
                                     deleteCallback: (Hologram) -> Unit): List<Text> = hologramsDistances.map { entry ->
         val hologram = entry.first
-        val shortenedPlainText = hologram.getText().toPlain().limit(8)
+        val shortenedPlainText = hologram.text.toPlain().limit(8)
         "- \"$shortenedPlainText\" | Distance: ${entry.second.toInt()} |".toText() +
                 " [TELEPORT] ".yellow().action(executeCallback { teleportCallback(hologram) }) +
                 " [MOVE]".yellow().action(executeCallback { moveCallback(hologram) }) +

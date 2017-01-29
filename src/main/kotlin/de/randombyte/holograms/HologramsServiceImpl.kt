@@ -20,15 +20,16 @@ import java.util.*
 class HologramsServiceImpl : HologramsService {
 
     class HologramImpl internal constructor(uuid: UUID, worldUuid: UUID) : Hologram(uuid, worldUuid) {
+
+        override var location: Location<World>
+            get() = getArmorStand().location
+            set(value) { getArmorStand().location = value }
+
+        override var text: Text
+            get() = getArmorStand().get(Keys.DISPLAY_NAME).orElse(Text.EMPTY)
+            set(value) { getArmorStand().offer(Keys.DISPLAY_NAME, value) }
+
         override fun doesExist() = worldUuid.getWorld()?.getEntity(uuid)?.orNull()?.type == EntityTypes.ARMOR_STAND
-
-        override fun getLocation(): Location<World> = getArmorStand().location
-        override fun setLocation(location: Location<World>) = getArmorStand().setLocation(location)
-
-        override fun getText(): Text = getArmorStand().get(Keys.DISPLAY_NAME).orElse(Text.EMPTY)
-        override fun setText(text: Text) {
-            getArmorStand().offer(Keys.DISPLAY_NAME, text)
-        }
 
         override fun remove() = getArmorStand().remove()
 
@@ -60,7 +61,7 @@ class HologramsServiceImpl : HologramsService {
             .toOptional()
 
     override fun getHolograms(center: Location<out Extent>, radius: Double) = getHolograms(center.extent)
-            .associateBy(keySelector = { it }, valueTransform = { center.position.distance(it.getLocation().position) })
+            .associateBy(keySelector = { it }, valueTransform = { center.position.distance(it.location.position) })
             .filter { it.value <= radius }
             .toList()
             .sortedBy { it.second }

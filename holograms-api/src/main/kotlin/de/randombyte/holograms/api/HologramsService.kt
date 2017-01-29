@@ -11,11 +11,9 @@ interface HologramsService {
     abstract class Hologram(val uuid: UUID, val worldUuid: UUID) {
         abstract fun doesExist(): Boolean
 
-        abstract fun getLocation(): Location<World>
-        abstract fun setLocation(location: Location<World>): Boolean
+        abstract var location: Location<World>
 
-        abstract fun getText(): Text
-        abstract fun setText(text: Text)
+        abstract var text: Text
 
         abstract fun remove()
 
