@@ -9,24 +9,40 @@ import java.util.*
 
 interface HologramsService {
     abstract class Hologram(val uuid: UUID, val worldUuid: UUID) {
-        abstract fun doesExist(): Boolean
-
         abstract var location: Location<World>
-
         abstract var text: Text
 
+        /**
+         * Checks if this Hologram still exists. It may be removed by [remove] or killed otherwise.
+         */
+        abstract fun doesExist(): Boolean
+
+        /**
+         * Removes the Hologram.
+         */
         abstract fun remove()
 
+        /**
+         * Gets the actual underlying [ArmorStand] entity. This can be used for further
+         * modifications of the Hologram but is normally not needed.
+         */
         abstract fun getArmorStand(): ArmorStand
     }
 
+    /**
+     * Creates an [Hologram] at the [location] with the [text].
+     *
+     * @return the spawned [Hologram], if absent it couldn't be spawned
+     */
     fun createHologram(location: Location<out Extent>, text: Text): Optional<Hologram>
 
     /**
      * Spawns multiple Holograms on top of each other. The most bottom one is at [lowestLocation].
-     * The following ones stack on top which creates the effect of a multiline Hologram.
+     * The following ones stack on top of each other which creates the effect of a multiline Hologram.
+     * The first [Text] in [texts] is the most top one.
+     * The texts are spaced by [verticalSpace] blocks. The default value is 0.3.
      *
-     * @return the spawned [Hologram]s, or [Optional.EMPTY] if they couldn't be spawned
+     * @return the spawned [Hologram]s, if absent they couldn't be spawned
      */
     fun createMultilineHologram(lowestLocation: Location<out Extent>, texts: List<Text>, verticalSpace: Double = 0.3): Optional<List<Hologram>> {
         val holograms = texts.asReversed().mapIndexed { i, text -> // from bottom to top
@@ -37,7 +53,12 @@ interface HologramsService {
         return Optional.of(holograms)
     }
 
-    fun getHologram(extent: Extent, hologramUUID: UUID): Optional<out Hologram>
+    /**
+     * Tries to find the [Hologram] with [hologramUuid] in the given [extent].
+     *
+     * @return the found [Hologram]s, if absent it couldn't be found
+     */
+    fun getHologram(extent: Extent, hologramUuid: UUID): Optional<out Hologram>
 
     /**
      * Returns a list of the [Hologram]s in the max [radius] around the [center].
@@ -45,5 +66,11 @@ interface HologramsService {
      * @return the list of [Hologram]s and the distance to the [center], sorted by the distance in ascending order
      */
     fun getHolograms(center: Location<out Extent>, radius: Double): List<Pair<Hologram, Double>>
+
+    /**
+     * Gets all [Hologram]s in the given [extent].
+     *
+     * @return all found [Hologram]s
+     */
     fun getHolograms(extent: Extent): List<Hologram>
 }

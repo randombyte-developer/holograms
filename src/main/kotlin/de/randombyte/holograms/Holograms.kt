@@ -16,14 +16,15 @@ import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.cause.Cause
 import org.spongepowered.api.event.cause.entity.spawn.SpawnCause
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes
+import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent
 import org.spongepowered.api.plugin.Plugin
-import org.spongepowered.api.text.Text
+import java.nio.file.Files
 import java.nio.file.Path
 
 @Plugin(id = Holograms.ID, name = Holograms.NAME, version = Holograms.VERSION, authors = arrayOf(Holograms.AUTHOR))
-class Holograms @Inject constructor(logger: Logger, @ConfigDir(sharedRoot = false) configPath: Path) {
+class Holograms @Inject constructor(val logger: Logger, @ConfigDir(sharedRoot = false) val configPath: Path) {
 
     companion object {
         const val NAME = "Holograms"
@@ -32,24 +33,20 @@ class Holograms @Inject constructor(logger: Logger, @ConfigDir(sharedRoot = fals
         const val AUTHOR = "RandomByte"
 
         const val HOLOGRAMS_PERMISSION = "holograms"
-
-        lateinit var PLUGIN_SPAWN_CAUSE: Cause
-        lateinit var LOGGER: Logger
     }
 
-    init {
-        Companion.LOGGER = logger
-    }
+    val inputFile: Path = configPath.resolve("input.txt")
 
     @Listener
     fun onPreInit(event : GamePreInitializationEvent) {
+        val spawnCause = Cause.source(SpawnCause.builder().type(SpawnTypes.PLUGIN).build()).build()
+        Sponge.getServiceManager().setProvider(this, HologramsService::class.java, HologramsServiceImpl(spawnCause))
         Sponge.getDataManager().register(HologramData::class.java, HologramData.Immutable::class.java, HologramData.Builder())
-        Sponge.getServiceManager().setProvider(this, HologramsService::class.java, HologramsServiceImpl())
     }
 
     @Listener
     fun onInit(event: GameInitializationEvent) {
-        PLUGIN_SPAWN_CAUSE = Cause.source(SpawnCause.builder().type(SpawnTypes.PLUGIN).build()).build()
+        inputFile.safelyCreateFile()
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
                 .permission(HOLOGRAMS_PERMISSION)
@@ -59,7 +56,6 @@ class Holograms @Inject constructor(logger: Logger, @ConfigDir(sharedRoot = fals
                         .permission(HOLOGRAMS_PERMISSION)
                         .arguments(GenericArguments.remainingJoinedStrings("text".toText()))
                         .executor(SpawnTextHologramCommand())
-                        .description(Text.of("Creates a Hologram at your feet with the given text which may contain color codes."))
                         .build(), "create")
                 .child(CommandSpec.builder()
                         .permission(HOLOGRAMS_PERMISSION)
@@ -67,18 +63,26 @@ class Holograms @Inject constructor(logger: Logger, @ConfigDir(sharedRoot = fals
                                 GenericArguments.integer("numberOfLines".toText()),
                                 GenericArguments.remainingJoinedStrings("texts".toText())))
                         .executor(SpawnMultiLineTextHologramCommand())
-                        .description(Text.of("Creates a Hologram with multiple lines pre-configured in the config file."))
                         .build(), "createMultiLine", "cml")
                 .child(CommandSpec.builder()
                         .permission(HOLOGRAMS_PERMISSION)
                         .arguments(GenericArguments.optional(GenericArguments.integer("maxDistance".toText())))
                         .executor(ListNearbyHologramsCommand(this))
-                        .description(Text.of("Lists nearby Holograms to delete or move them."))
-                        .extendedDescription(Text.of("A number can be added to the command to specify in which " +
-                                "radius Holograms will be listed."))
                         .build(), "list")
                 .build(), "holograms")
 
-        LOGGER.info("$NAME loaded: $VERSION")
+        logger.info("$NAME loaded: $VERSION")
+    }
+
+    @Listener
+    fun onReload(event: GameReloadEvent) {
+        inputFile.safelyCreateFile()
+    }
+
+    fun Path.safelyCreateFile() {
+        if (!Files.exists(this)) {
+            Files.createDirectories(this.parent)
+            Files.createFile(this)
+        }
     }
 }

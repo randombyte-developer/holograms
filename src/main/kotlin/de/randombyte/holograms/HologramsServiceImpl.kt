@@ -9,15 +9,17 @@ import de.randombyte.kosp.extensions.getWorld
 import de.randombyte.kosp.extensions.orNull
 import de.randombyte.kosp.extensions.toOptional
 import org.spongepowered.api.data.key.Keys
+import org.spongepowered.api.entity.Entity
 import org.spongepowered.api.entity.EntityTypes
 import org.spongepowered.api.entity.living.ArmorStand
+import org.spongepowered.api.event.cause.Cause
 import org.spongepowered.api.text.Text
 import org.spongepowered.api.world.Location
 import org.spongepowered.api.world.World
 import org.spongepowered.api.world.extent.Extent
 import java.util.*
 
-class HologramsServiceImpl : HologramsService {
+class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
 
     class HologramImpl internal constructor(uuid: UUID, worldUuid: UUID) : Hologram(uuid, worldUuid) {
 
@@ -29,7 +31,7 @@ class HologramsServiceImpl : HologramsService {
             get() = getArmorStand().get(Keys.DISPLAY_NAME).orElse(Text.EMPTY)
             set(value) { getArmorStand().offer(Keys.DISPLAY_NAME, value) }
 
-        override fun doesExist() = worldUuid.getWorld()?.getEntity(uuid)?.orNull()?.type == EntityTypes.ARMOR_STAND
+        override fun doesExist() = worldUuid.getWorld()?.getEntity(uuid)?.orNull()?.isHologram() ?: false
 
         override fun remove() = getArmorStand().remove()
 
@@ -43,7 +45,7 @@ class HologramsServiceImpl : HologramsService {
 
     override fun createHologram(location: Location<out Extent>, text: Text): Optional<Hologram> {
         val armorStand = location.createEntity(EntityTypes.ARMOR_STAND)
-        if (!location.extent.spawnEntity(armorStand, Holograms.PLUGIN_SPAWN_CAUSE)) return Optional.empty()
+        if (!location.extent.spawnEntity(armorStand, spawnCause)) return Optional.empty()
 
         armorStand.offer(Keys.DISPLAY_NAME, text)
         armorStand.offer(Keys.CUSTOM_NAME_VISIBLE, true)
@@ -56,8 +58,8 @@ class HologramsServiceImpl : HologramsService {
         return HologramImpl(armorStand.uniqueId,location.extent.uniqueId).toOptional()
     }
 
-    override fun getHologram(extent: Extent, hologramUUID: UUID) = getHolograms(extent)
-            .firstOrNull { it.uuid == hologramUUID }
+    override fun getHologram(extent: Extent, hologramUuid: UUID) = getHolograms(extent)
+            .firstOrNull { it.uuid == hologramUuid }
             .toOptional()
 
     override fun getHolograms(center: Location<out Extent>, radius: Double) = getHolograms(center.extent)
@@ -67,6 +69,9 @@ class HologramsServiceImpl : HologramsService {
             .sortedBy { it.second }
 
     override fun getHolograms(extent : Extent) = extent.entities
-            .filter { it is ArmorStand && it.get(HologramKeys.IS_HOLOGRAM).orElse(false) }
+            .filter(Entity::isHologram)
             .map { HologramImpl(it.uniqueId, extent.uniqueId) }
+
 }
+
+private fun Entity.isHologram() = this is ArmorStand && get(HologramKeys.IS_HOLOGRAM).orElse(false)

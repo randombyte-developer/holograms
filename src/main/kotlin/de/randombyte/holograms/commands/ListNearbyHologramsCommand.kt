@@ -14,6 +14,8 @@ import org.spongepowered.api.service.pagination.PaginationService
 import org.spongepowered.api.text.Text
 import org.spongepowered.api.text.action.TextActions.executeCallback
 import org.spongepowered.api.text.action.TextActions.suggestCommand
+import org.spongepowered.api.text.serializer.TextSerializers
+import java.nio.file.Path
 
 class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecutedCommand() {
     companion object {
@@ -44,17 +46,33 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                     }
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
+                copyCallback = { hologram ->
+                    if (hologram.checkIfExists(player)) {
+                        ServiceUtils.getServiceOrFail(HologramsService::class).createHologram(player.location, hologram.text)
+                        player.sendMessage("Copied Hologram to your location!".yellow())
+                    }
+                    sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
+                },
+                setTextFromFileCallback = { hologram ->
+                    if (hologram.checkIfExists(player)) {
+                        val newTextString = pluginInstance.inputFile.readText()
+                        val newText = TextSerializers.FORMATTING_CODE.deserialize(newTextString)
+                        hologram.text = newText
+                        player.sendMessage("Hologram text set!".yellow())
+                    }
+                    sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed lis
+                },
                 moveCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
                         hologram.location = player.location
-                        player.sendMessage("Hologram moved!".yellow())
+                        player.sendMessage("Moved Hologram!".yellow())
                     }
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
                 deleteCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
                         hologram.remove()
-                        player.sendMessage("Hologram removed!".yellow())
+                        player.sendMessage("Removed Hologram!".yellow())
                     }
 
                     // Delay displaying the Holograms to allow the game to remove the deleted Hologram
@@ -79,13 +97,19 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
 
     private fun getHologramTextList(hologramsDistances: List<Pair<Hologram, Double>>,
                                     teleportCallback: (Hologram) -> Unit,
+                                    copyCallback: (Hologram) -> Unit,
+                                    setTextFromFileCallback: (Hologram) -> Unit,
                                     moveCallback: (Hologram) -> Unit,
                                     deleteCallback: (Hologram) -> Unit): List<Text> = hologramsDistances.map { entry ->
         val hologram = entry.first
-        val shortenedPlainText = hologram.text.toPlain().limit(8)
-        "- \"$shortenedPlainText\" | Distance: ${entry.second.toInt()} |".toText() +
-                " [TELEPORT] ".yellow().action(executeCallback { teleportCallback(hologram) }) +
-                " [MOVE]".yellow().action(executeCallback { moveCallback(hologram) }) +
-                " [DELETE]".red().action(executeCallback { deleteCallback(hologram) })
+        val shortenedPlainText = hologram.text.toPlain().limit(4) + "…"
+        "- '$shortenedPlainText' | Dis: ${entry.second.toInt()} |".toText() +
+                " [TP]".yellow().action(executeCallback { teleportCallback(hologram) }) +
+                " [CP]".yellow().action(executeCallback { copyCallback(hologram) }) +
+                " [TEXT FROM FILE]".yellow().action(executeCallback { setTextFromFileCallback(hologram) }) +
+                " [MV]".yellow().action(executeCallback { moveCallback(hologram) }) +
+                " [DEL]".red().action(executeCallback { deleteCallback(hologram) })
     }
+
+    fun Path.readText() = toFile().readText()
 }
