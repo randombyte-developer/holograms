@@ -62,7 +62,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                 },
                 setTextFromFileCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
-                        val newTextString = pluginInstance.inputFile.readText()
+                        val newTextString = pluginInstance.inputFile.readText().removeNewLineCharacters()
                         val newText = TextSerializers.FORMATTING_CODE.deserialize(newTextString)
                         hologram.text = newText
                         player.sendMessage("Hologram text set!".yellow())
@@ -111,5 +111,6 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                 " [DEL]".red().action(executeCallback { deleteCallback(hologram) })
     }
 
-    fun Path.readText() = toFile().readText().replace("\n", " ").replace("\r", " ").replace("\r\n", " ")
+    private fun Path.readText() = toFile().readText()
+    private fun String.removeNewLineCharacters() = replace("\n", "").replace("\r", "").replace("\r\n", "")
 }

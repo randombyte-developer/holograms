@@ -79,7 +79,7 @@ class Holograms @Inject constructor(val logger: Logger, @ConfigDir(sharedRoot = 
         inputFile.safelyCreateFile()
     }
 
-    fun Path.safelyCreateFile() {
+    private fun Path.safelyCreateFile() {
         if (!Files.exists(this)) {
             Files.createDirectories(this.parent)
             Files.createFile(this)
