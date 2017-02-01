@@ -20,19 +20,6 @@ dependencies {
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
 }
 
-/*shadowJar {
-    dependencies {
-        include dependency("org.jetbrains.kotlin:kotlin-runtime")
-        include dependency("org.jetbrains.kotlin:kotlin-stdlib")
-    }
-
-    exclude "StartServer*.*"
-
-    relocate "kotlin", "de.randombyte.holograms.internal.kotlin"
-
-    classifier = null // Remove '-all' suffix from output file name
-}*/
-
 // Produces the source-jar, which is for JitPack
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = "sources"

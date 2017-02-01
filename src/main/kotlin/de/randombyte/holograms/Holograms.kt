@@ -29,7 +29,7 @@ class Holograms @Inject constructor(val logger: Logger, @ConfigDir(sharedRoot = 
     companion object {
         const val NAME = "Holograms"
         const val ID = "holograms"
-        const val VERSION = "v2.0.1"
+        const val VERSION = "v2.1"
         const val AUTHOR = "RandomByte"
 
         const val HOLOGRAMS_PERMISSION = "holograms"
