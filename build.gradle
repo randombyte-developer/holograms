@@ -35,6 +35,7 @@ shadowJar {
         include dependency("org.jetbrains.kotlin:kotlin-runtime")
         include dependency("org.jetbrains.kotlin:kotlin-stdlib")
         include dependency("com.github.randombyte-developer.kosp:kosp")
+        include project("holograms-api")
     }
 
     exclude "StartServer*.*"

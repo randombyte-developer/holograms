@@ -111,5 +111,5 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                 " [DEL]".red().action(executeCallback { deleteCallback(hologram) })
     }
 
-    fun Path.readText() = toFile().readText()
+    fun Path.readText() = toFile().readText().replace("\n", " ").replace("\r", " ").replace("\r\n", " ")
 }
