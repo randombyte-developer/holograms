@@ -53,6 +53,13 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                     }
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
+                moveCallback = { hologram ->
+                    if (hologram.checkIfExists(player)) {
+                        hologram.location = player.location
+                        player.sendMessage("Moved Hologram!".yellow())
+                    }
+                    sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
+                },
                 setTextFromFileCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
                         val newTextString = pluginInstance.inputFile.readText()
@@ -61,13 +68,6 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                         player.sendMessage("Hologram text set!".yellow())
                     }
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed lis
-                },
-                moveCallback = { hologram ->
-                    if (hologram.checkIfExists(player)) {
-                        hologram.location = player.location
-                        player.sendMessage("Moved Hologram!".yellow())
-                    }
-                    sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
                 deleteCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
@@ -98,16 +98,16 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
     private fun getHologramTextList(hologramsDistances: List<Pair<Hologram, Double>>,
                                     teleportCallback: (Hologram) -> Unit,
                                     copyCallback: (Hologram) -> Unit,
-                                    setTextFromFileCallback: (Hologram) -> Unit,
                                     moveCallback: (Hologram) -> Unit,
+                                    setTextFromFileCallback: (Hologram) -> Unit,
                                     deleteCallback: (Hologram) -> Unit): List<Text> = hologramsDistances.map { entry ->
         val hologram = entry.first
         val shortenedPlainText = hologram.text.toPlain().limit(4) + "…"
         "- '$shortenedPlainText' | Dis: ${entry.second.toInt()} |".toText() +
                 " [TP]".yellow().action(executeCallback { teleportCallback(hologram) }) +
                 " [CP]".yellow().action(executeCallback { copyCallback(hologram) }) +
-                " [TEXT FROM FILE]".yellow().action(executeCallback { setTextFromFileCallback(hologram) }) +
                 " [MV]".yellow().action(executeCallback { moveCallback(hologram) }) +
+                " [TEXT FROM FILE]".yellow().action(executeCallback { setTextFromFileCallback(hologram) }) +
                 " [DEL]".red().action(executeCallback { deleteCallback(hologram) })
     }
 

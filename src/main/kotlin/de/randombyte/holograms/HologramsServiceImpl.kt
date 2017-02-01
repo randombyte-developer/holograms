@@ -23,6 +23,11 @@ class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
 
     class HologramImpl internal constructor(uuid: UUID, worldUuid: UUID) : Hologram(uuid, worldUuid) {
 
+        init {
+            if (!doesExist())
+                throw IllegalArgumentException("Hologram can't be found, run Hologram#getArmorStand() to get more information.")
+        }
+
         override var location: Location<World>
             get() = getArmorStand().location
             set(value) { getArmorStand().location = value }
@@ -39,6 +44,7 @@ class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
             val world = worldUuid.getWorld() ?: throw RuntimeException("Can't find world '$worldUuid'!")
             val entity = world.getEntity(uuid).orNull() ?: throw RuntimeException("Can't find Entity '$uuid' in world '$worldUuid'!")
             val armorStand = (entity as? ArmorStand) ?: throw RuntimeException("Entity '$uuid' in world '$world' is not an ArmorStand!")
+            if (!armorStand.isHologram()) throw RuntimeException("ArmorStand '$uuid' in world '$worldUuid' is not a Hologram!")
             return armorStand
         }
     }
