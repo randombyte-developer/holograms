@@ -43,7 +43,7 @@ class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
         override fun getArmorStand(): ArmorStand {
             val world = worldUuid.getWorld() ?: throw RuntimeException("Can't find world '$worldUuid'!")
             val entity = world.getEntity(uuid).orNull() ?: throw RuntimeException("Can't find Entity '$uuid' in world '$worldUuid'!")
-            val armorStand = (entity as? ArmorStand) ?: throw RuntimeException("Entity '$uuid' in world '$world' is not an ArmorStand!")
+            val armorStand = (entity as? ArmorStand) ?: throw RuntimeException("Entity '$uuid' in world '$worldUuid' is not an ArmorStand!")
             if (!armorStand.isHologram()) throw RuntimeException("ArmorStand '$uuid' in world '$worldUuid' is not a Hologram!")
             return armorStand
         }
