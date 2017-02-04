@@ -1,9 +1,3 @@
-# holograms
-
-## [Link to forum topic](https://forums.spongepowered.org/t/holograms-easily-create-floating-texts/12861)
-
----
-
 # How to use the Holograms-API
 
 ## Setup the dependency
