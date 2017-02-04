@@ -1,11 +1,12 @@
 plugins {
     id "com.zoltu.kotlin" version "1.0.6"
-    id "com.qixalite.spongestart" version "1.5.2"
+    id "com.qixalite.spongestart" version "1.6.0"
     id "com.github.johnrengelman.shadow" version "1.2.4"
+    id "flavor.pie.promptsign" version "1.0.2"
 }
 
 group "de.randombyte"
-version "v2.1"
+version "2.1.1"
 
 repositories {
     jcenter()
@@ -15,28 +16,33 @@ repositories {
 
 spongestart {
     eula true
-    spongeVanillaBuild "1.10.2-5.1.0-BETA-366"
+    spongeVanillaVersion "1.10.2-5.1.0-BETA-366"
 }
 
 ext.spongeApiVersion = "5.0.0"
 ext.kotlinVersion = "1.0.6"
 
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compile "org.spongepowered:spongeapi:$spongeApiVersion"
-    kapt "org.spongepowered:spongeapi:$spongeApiVersion"
-    compile "com.github.randombyte-developer.kosp:kosp:v0.3.9.1"
-    compile project("holograms-api")
+configurations {
+    compile.extendsFrom shadow
 }
 
-shadowJar {
-    dependencies {
-        include dependency("org.jetbrains.kotlin:kotlin-runtime")
-        include dependency("org.jetbrains.kotlin:kotlin-stdlib")
-        include dependency("com.github.randombyte-developer.kosp:kosp")
-        include project("holograms-api")
+dependencies {
+    shadow "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.spongepowered:spongeapi:$spongeApiVersion"
+    kapt "org.spongepowered:spongeapi:$spongeApiVersion"
+    shadow("com.github.randombyte-developer.kosp:kosp:v0.3.10.1") {
+        transitive = false
     }
+    shadow(project("holograms-api")) {
+        transitive = false
+    }
+}
+
+jar.enabled = false
+
+shadowJar {
+    configurations = [project.configurations.shadow]
 
     exclude "StartServer*.*"
 
@@ -45,3 +51,5 @@ shadowJar {
 
     classifier = null // Remove '-all' suffix from output file name
 }
+build.dependsOn shadowJar
+signArchives.dependsOn shadowJar
