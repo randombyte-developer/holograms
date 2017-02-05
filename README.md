@@ -11,7 +11,7 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile "com.github.randombyte-developer.holograms:holograms-api:v2.1"
+    compile "com.github.randombyte-developer.holograms:holograms-api:v2.1.1"
 }
 ```
 
