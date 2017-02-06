@@ -1,3 +1,5 @@
+# [Ore page](https://ore.spongepowered.org/RandomByte/Holograms)
+
 # How to use the Holograms-API
 
 ## Setup the dependency
@@ -26,46 +28,46 @@ Basically, the fields prefixed with `var` like `text` and `location` have a gett
 Here is an example:
 ```java
 Optional<HologramsService> hologramsServiceOptional = Sponge.getServiceManager().provide(HologramsService.class);
-                    HologramsService hologramsService = hologramsServiceOptional.orElseThrow(
-                            () -> new RuntimeException("HologramsAPI not available! Is the plugin 'holograms' installed?"));
+HologramsService hologramsService = hologramsServiceOptional.orElseThrow(
+        () -> new RuntimeException("HologramsAPI not available! Is the plugin 'holograms' installed?"));
 
-                    // Creating a Hologram
-                    Optional<HologramsService.Hologram> hologramOptional = hologramsService
-                            .createHologram(player.getLocation(), Text.of(TextColors.GREEN, "Example text"));
-                    if (!hologramOptional.isPresent()) {
-                        player.sendMessage(Text.of("Hologram couldn't be spawned!"));
-                        return CommandResult.success();
-                    }
+// Creating a Hologram
+Optional<HologramsService.Hologram> hologramOptional = hologramsService
+        .createHologram(player.getLocation(), Text.of(TextColors.GREEN, "Example text"));
+if (!hologramOptional.isPresent()) {
+    player.sendMessage(Text.of("Hologram couldn't be spawned!"));
+    return CommandResult.success();
+}
 
-                    // Modifying the Hologram
-                    Hologram hologram = hologramOptional.get();
+// Modifying the Hologram
+Hologram hologram = hologramOptional.get();
 
-                    hologram.setText(Text.of("New text"));
+hologram.setText(Text.of("New text"));
 
-                    Location<World> newLocation = hologram.getLocation().add(0.0, 5.0, 0.0);
-                    hologram.setLocation(newLocation);
+Location<World> newLocation = hologram.getLocation().add(0.0, 5.0, 0.0);
+hologram.setLocation(newLocation);
 
-                    // Finding the Hologram by UUID
-                    // Both UUIDs are saved somewhere (e.g. in a config file)
-                    UUID hologramUuid = hologram.getUuid();
-                    UUID worldUuid = hologram.getWorldUuid();
+// Finding the Hologram by UUID
+// Both UUIDs are saved somewhere (e.g. in a config file)
+UUID hologramUuid = hologram.getUuid();
+UUID worldUuid = hologram.getWorldUuid();
 
-                    Optional<World> worldOptional = Sponge.getServer().getWorld(worldUuid);
-                    if (!worldOptional.isPresent()) {
-                        player.sendMessage(Text.of("Couldn't find world!"));
-                        return CommandResult.success();
-                    }
-                    World world = worldOptional.get();
-                    Optional<? extends Hologram> loadedHologramOptional = hologramsService.getHologram(world, hologramUuid);
-                    if (!loadedHologramOptional.isPresent()) {
-                        player.sendMessage(Text.of("Couldn't find Hologram!"));
-                        return CommandResult.success();
-                    }
-                    Hologram loadedHologram = loadedHologramOptional.get();
-                    loadedHologram.setText(Text.of("This Hologram was found!"));
+Optional<World> worldOptional = Sponge.getServer().getWorld(worldUuid);
+if (!worldOptional.isPresent()) {
+    player.sendMessage(Text.of("Couldn't find world!"));
+    return CommandResult.success();
+}
+World world = worldOptional.get();
+Optional<? extends Hologram> loadedHologramOptional = hologramsService.getHologram(world, hologramUuid);
+if (!loadedHologramOptional.isPresent()) {
+    player.sendMessage(Text.of("Couldn't find Hologram!"));
+    return CommandResult.success();
+}
+Hologram loadedHologram = loadedHologramOptional.get();
+loadedHologram.setText(Text.of("This Hologram was found!"));
 
-                    // Removing the Hologram
-                    loadedHologram.remove();
+// Removing the Hologram
+loadedHologram.remove();
 ```
 
 If you have questions, please ask me!
