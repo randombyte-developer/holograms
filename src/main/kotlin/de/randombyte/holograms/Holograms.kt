@@ -36,8 +36,6 @@ class Holograms @Inject constructor(
         const val ID = "holograms"
         const val VERSION = "2.1.1"
         const val AUTHOR = "RandomByte"
-
-        const val HOLOGRAMS_PERMISSION = "holograms"
     }
 
     val inputFile: Path = configPath.resolve("input.txt")
@@ -54,28 +52,28 @@ class Holograms @Inject constructor(
         inputFile.safelyCreateFile()
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
-                .permission(HOLOGRAMS_PERMISSION)
+                .permission("holograms")
                 .executor(ListNearbyHologramsCommand(this))
                 .arguments(optional(integer("maxDistance".toText())))
                 .child(CommandSpec.builder()
-                        .permission(HOLOGRAMS_PERMISSION)
+                        .permission("holograms.create")
                         .arguments(remainingJoinedStrings("text".toText()))
                         .executor(SpawnTextHologramCommand())
                         .build(), "create")
                 .child(CommandSpec.builder()
-                        .permission(HOLOGRAMS_PERMISSION)
+                        .permission("holograms.createMultiLine")
                         .arguments(firstParsing(
                                 integer("numberOfLines".toText()),
                                 remainingJoinedStrings("texts".toText())))
                         .executor(SpawnMultiLineTextHologramCommand())
                         .build(), "createMultiLine", "cml")
                 .child(CommandSpec.builder()
-                        .permission(HOLOGRAMS_PERMISSION)
+                        .permission("holograms.list")
                         .arguments(optional(integer("maxDistance".toText())))
                         .executor(ListNearbyHologramsCommand(this))
                         .build(), "list")
                 .child(CommandSpec.builder()
-                        .permission(HOLOGRAMS_PERMISSION)
+                        .permission("holograms.setText")
                         .arguments(remainingJoinedStrings("text".toText()))
                         .executor(SetNearestHologramText())
                         .build(), "setText")

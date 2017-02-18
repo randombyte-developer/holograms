@@ -40,6 +40,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
 
         val hologramTextList = getHologramTextList(nearbyHolograms,
                 teleportCallback = { hologram ->
+                    if (!player.checkPermission("holograms.teleport")) return@getHologramTextList
                     if (hologram.checkIfExists(player)) {
                         player.location = hologram.location
                         player.sendMessage("Teleported to Hologram!".yellow())
@@ -47,6 +48,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
                 copyCallback = { hologram ->
+                    if (!player.checkPermission("holograms.copy")) return@getHologramTextList
                     if (hologram.checkIfExists(player)) {
                         getServiceOrFail(HologramsService::class).createHologram(player.location, hologram.text)
                         player.sendMessage("Copied Hologram to your location!".yellow())
@@ -54,6 +56,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
                 moveCallback = { hologram ->
+                    if (!player.checkPermission("holograms.move")) return@getHologramTextList
                     if (hologram.checkIfExists(player)) {
                         hologram.location = player.location
                         player.sendMessage("Moved Hologram!".yellow())
@@ -61,6 +64,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
                 },
                 setTextFromFileCallback = { hologram ->
+                    if (!player.checkPermission("holograms.setTextFromFile")) return@getHologramTextList
                     if (hologram.checkIfExists(player)) {
                         val newTextString = pluginInstance.inputFile.readText().removeNewLineCharacters()
                         val newText = TextSerializers.FORMATTING_CODE.deserialize(newTextString)
@@ -70,6 +74,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed lis
                 },
                 deleteCallback = { hologram ->
+                    if (!player.checkPermission("holograms.delete")) return@getHologramTextList
                     if (hologram.checkIfExists(player)) {
                         hologram.remove()
                         player.sendMessage("Removed Hologram!".yellow())
@@ -126,4 +131,9 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
 
     private fun Path.readText() = toFile().readText()
     private fun String.removeNewLineCharacters() = replace("\n", "").replace("\r", "").replace("\r\n", "")
+
+    private fun Player.checkPermission(permission: String): Boolean = if (hasPermission(permission)) true else {
+        sendMessage("You don't have the permission to do this!".red())
+        false
+    }
 }
