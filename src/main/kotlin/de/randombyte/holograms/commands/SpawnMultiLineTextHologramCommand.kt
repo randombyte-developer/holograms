@@ -2,9 +2,9 @@ package de.randombyte.holograms.commands
 
 import de.randombyte.holograms.api.HologramsService
 import de.randombyte.kosp.PlayerExecutedCommand
-import de.randombyte.kosp.ServiceUtils
 import de.randombyte.kosp.extensions.green
 import de.randombyte.kosp.extensions.orNull
+import de.randombyte.kosp.getServiceOrFail
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
@@ -25,7 +25,7 @@ class SpawnMultiLineTextHologramCommand : PlayerExecutedCommand() {
             textsString!!.split(SEPARATOR).map { TextSerializers.FORMATTING_CODE.deserialize(it) }
         }
 
-        ServiceUtils.getServiceOrFail(HologramsService::class).createMultilineHologram(player.location, texts)
+        getServiceOrFail(HologramsService::class).createMultilineHologram(player.location, texts)
 
         player.sendMessage("Holograms created!".green())
 

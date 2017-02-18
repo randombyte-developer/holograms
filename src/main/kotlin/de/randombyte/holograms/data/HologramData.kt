@@ -45,7 +45,7 @@ class HologramData internal constructor(var isHologram: Boolean = false) : Abstr
 
     override fun from(container: DataContainer) = from(container as DataView)
 
-    fun from(container: DataView): Optional<HologramData> {
+    private fun from(container: DataView): Optional<HologramData> {
         container.getBoolean(HologramKeys.IS_HOLOGRAM.query).ifPresent { isHologram = it }
         return toOptional()
     }

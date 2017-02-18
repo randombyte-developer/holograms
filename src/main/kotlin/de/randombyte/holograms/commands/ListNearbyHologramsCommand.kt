@@ -4,16 +4,15 @@ import de.randombyte.holograms.Holograms
 import de.randombyte.holograms.api.HologramsService
 import de.randombyte.holograms.api.HologramsService.Hologram
 import de.randombyte.kosp.PlayerExecutedCommand
-import de.randombyte.kosp.ServiceUtils
 import de.randombyte.kosp.extensions.*
+import de.randombyte.kosp.getServiceOrFail
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.scheduler.Task
 import org.spongepowered.api.service.pagination.PaginationService
 import org.spongepowered.api.text.Text
-import org.spongepowered.api.text.action.TextActions.executeCallback
-import org.spongepowered.api.text.action.TextActions.suggestCommand
+import org.spongepowered.api.text.action.TextActions.*
 import org.spongepowered.api.text.serializer.TextSerializers
 import java.nio.file.Path
 
@@ -30,7 +29,8 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
     }
 
     private fun sendHologramList(player: Player, maxDistance: Int, statusMessageWasSentBefore: Boolean = false) {
-        val nearbyHolograms = ServiceUtils.getServiceOrFail(HologramsService::class).getHolograms(player.location, maxDistance.toDouble())
+        val nearbyHolograms = getServiceOrFail(HologramsService::class)
+                .getHolograms(player.location, maxDistance.toDouble())
 
         fun Hologram.checkIfExists(player: Player): Boolean {
             val exists = doesExist()
@@ -48,7 +48,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                 },
                 copyCallback = { hologram ->
                     if (hologram.checkIfExists(player)) {
-                        ServiceUtils.getServiceOrFail(HologramsService::class).createHologram(player.location, hologram.text)
+                        getServiceOrFail(HologramsService::class).createHologram(player.location, hologram.text)
                         player.sendMessage("Copied Hologram to your location!".yellow())
                     }
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
@@ -86,7 +86,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
             player.sendMessage(Text.EMPTY) // clear line above the following list
             CHAT_MAX_LINES_SEEN
         }
-        ServiceUtils.getServiceOrFail(PaginationService::class).builder()
+        getServiceOrFail(PaginationService::class).builder()
                 .linesPerPage(linesPerPage)
                 .title(getHeaderText(maxDistance))
                 .contents(hologramTextList)
@@ -102,13 +102,26 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                                     setTextFromFileCallback: (Hologram) -> Unit,
                                     deleteCallback: (Hologram) -> Unit): List<Text> = hologramsDistances.map { entry ->
         val hologram = entry.first
-        val shortenedPlainText = hologram.text.toPlain().limit(4) + "…"
-        "- '$shortenedPlainText' | Dis: ${entry.second.toInt()} |".toText() +
-                " [TP]".yellow().action(executeCallback { teleportCallback(hologram) }) +
-                " [CP]".yellow().action(executeCallback { copyCallback(hologram) }) +
-                " [MV]".yellow().action(executeCallback { moveCallback(hologram) }) +
-                " [TEXT FROM FILE]".yellow().action(executeCallback { setTextFromFileCallback(hologram) }) +
-                " [DEL]".red().action(executeCallback { deleteCallback(hologram) })
+        val shortenedPlainText = (hologram.text.toPlain().limit(4) + "…").action(showText(hologram.text))
+        "- '".toText() + shortenedPlainText + "' | Dis: ${entry.second.toInt()} |" +
+                " [TP]".yellow()
+                        .action(showText("Teleport to hologram".toText()))
+                        .action(executeCallback { teleportCallback(hologram) }) +
+                " [CP]".yellow()
+                        .action(showText("Copy hologram to your location".toText()))
+                        .action(executeCallback { copyCallback(hologram) }) +
+                " [MV]".yellow()
+                        .action(showText("Move hologram to your location".toText()))
+                        .action(executeCallback { moveCallback(hologram) }) +
+                " [ST]".yellow()
+                        .action(showText("Set text of hologram".toText()))
+                        .action(suggestCommand("/holograms setText <text>")) +
+                " [TFF]".yellow()
+                        .action(showText("Set text of hologram from config/holograms/input.txt".toText()))
+                        .action(executeCallback { setTextFromFileCallback(hologram) }) +
+                " [DEL]".red()
+                        .action(showText("Delete hologram".toText()))
+                        .action(executeCallback { deleteCallback(hologram) })
     }
 
     private fun Path.readText() = toFile().readText()

@@ -31,7 +31,7 @@ dependencies {
     shadow "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile "org.spongepowered:spongeapi:$spongeApiVersion"
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
-    shadow("com.github.randombyte-developer.kosp:kosp:v0.3.10.1") {
+    shadow("com.github.randombyte-developer.kosp:kosp:v0.3.10.4") {
         transitive = false
     }
     shadow(project("holograms-api")) {

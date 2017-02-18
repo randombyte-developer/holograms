@@ -74,7 +74,7 @@ class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
             .toList()
             .sortedBy { it.second }
 
-    override fun getHolograms(extent : Extent) = extent.entities
+    override fun getHolograms(extent: Extent) = extent.entities
             .filter(Entity::isHologram)
             .map { HologramImpl(it.uniqueId, extent.uniqueId) }
 
