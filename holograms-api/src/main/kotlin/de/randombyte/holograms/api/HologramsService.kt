@@ -44,7 +44,7 @@ interface HologramsService {
      *
      * @return the spawned [Hologram]s, if absent they couldn't be spawned
      */
-    fun createMultilineHologram(lowestLocation: Location<out Extent>, texts: List<Text>, verticalSpace: Double = 0.3): Optional<List<Hologram>> {
+    fun createMultilineHologram(lowestLocation: Location<out Extent>, texts: List<Text>, verticalSpace: Double): Optional<List<Hologram>> {
         val holograms = texts.asReversed().mapIndexed { i, text -> // from bottom to top
             val pos = lowestLocation.position.add(0.0, i * verticalSpace, 0.0)
             val hologram = createHologram(lowestLocation.setPosition(pos), text).orElse(null) ?: return Optional.empty()

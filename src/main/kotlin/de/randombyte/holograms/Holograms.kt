@@ -62,9 +62,13 @@ class Holograms @Inject constructor(
                         .build(), "create")
                 .child(CommandSpec.builder()
                         .permission("holograms.createMultiLine")
-                        .arguments(firstParsing(
-                                integer("numberOfLines".toText()),
-                                remainingJoinedStrings("texts".toText())))
+                        .arguments(seq(
+                                doubleNum("verticalSpace".toText()),
+                                firstParsing(
+                                        integer("numberOfLines".toText()),
+                                        remainingJoinedStrings("texts".toText())
+                                )
+                        ))
                         .executor(SpawnMultiLineTextHologramCommand())
                         .build(), "createMultiLine", "cml")
                 .child(CommandSpec.builder()
