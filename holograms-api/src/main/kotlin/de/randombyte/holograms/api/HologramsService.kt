@@ -15,7 +15,7 @@ interface HologramsService {
         /**
          * Checks if this Hologram still exists. It may be removed by [remove] or killed otherwise.
          */
-        abstract fun doesExist(): Boolean
+        abstract fun exists(): Boolean
 
         /**
          * Removes the Hologram.

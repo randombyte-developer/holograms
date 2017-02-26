@@ -33,7 +33,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                 .getHolograms(player.location, maxDistance.toDouble())
 
         fun Hologram.checkIfExists(player: Player): Boolean {
-            val exists = doesExist()
+            val exists = exists()
             if (!exists) player.sendMessage("Hologram does not exist!".red())
             return exists
         }
@@ -98,7 +98,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                 .sendTo(player)
         }
 
-    private fun getHeaderText(radius: Int) = "[CREATE]".green().action(suggestCommand("/holograms create text")) + " | In radius $radius:"
+    private fun getHeaderText(radius: Int) = "[CREATE]".green().action(suggestCommand("/holograms create <text>")) + " | In radius $radius:"
 
     private fun getHologramTextList(hologramsDistances: List<Pair<Hologram, Double>>,
                                     teleportCallback: (Hologram) -> Unit,
@@ -122,7 +122,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                         .action(showText("Set text of hologram".toText()))
                         .action(suggestCommand("/holograms setText <text>")) +
                 " [TFF]".yellow()
-                        .action(showText("Set text of hologram from config/holograms/input.txt".toText()))
+                        .action(showText("Set text from config/holograms/input.txt".toText()))
                         .action(executeCallback { setTextFromFileCallback(hologram) }) +
                 " [DEL]".red()
                         .action(showText("Delete hologram".toText()))

@@ -24,8 +24,9 @@ class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
     class HologramImpl internal constructor(uuid: UUID, worldUuid: UUID) : Hologram(uuid, worldUuid) {
 
         init {
-            if (!doesExist())
-                throw IllegalArgumentException("Hologram can't be found, run Hologram#getArmorStand() to get more information.")
+            // Check for existence by trying to get the ArmorStand
+            // If it can't be found a detailed exception is thrown
+            getArmorStand()
         }
 
         override var location: Location<World>
@@ -36,7 +37,7 @@ class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
             get() = getArmorStand().get(Keys.DISPLAY_NAME).orElse(Text.EMPTY)
             set(value) { getArmorStand().offer(Keys.DISPLAY_NAME, value) }
 
-        override fun doesExist() = worldUuid.getWorld()?.getEntity(uuid)?.orNull()?.isHologram() ?: false
+        override fun exists() = worldUuid.getWorld()?.getEntity(uuid)?.orNull()?.isHologram() ?: false
 
         override fun remove() = getArmorStand().remove()
 
@@ -61,7 +62,7 @@ class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
         val data = armorStand.getOrCreate(HologramData::class.java).get().set(HologramKeys.IS_HOLOGRAM, true)
         armorStand.offer(data)
 
-        return HologramImpl(armorStand.uniqueId,location.extent.uniqueId).toOptional()
+        return HologramImpl(armorStand.uniqueId, location.extent.uniqueId).toOptional()
     }
 
     override fun getHologram(extent: Extent, hologramUuid: UUID) = getHolograms(extent)
