@@ -1,15 +1,8 @@
-apply plugin: "com.zoltu.kotlin"
+apply plugin: "kotlin"
+apply plugin: "kotlin-kapt"
 
 group "de.randombyte"
 version "1.0.1"
-
-repositories {
-    jcenter()
-    maven { url "https://repo.spongepowered.org/maven/" }
-}
-
-ext.spongeApiVersion = "5.0.0"
-ext.kotlinVersion = "1.0.6"
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
@@ -18,7 +11,7 @@ dependencies {
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
 }
 
-// Produces the source-jar, which is for JitPack
+// Produces the source-jar for JitPack
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = "sources"
     from sourceSets.main.allSource

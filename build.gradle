@@ -1,26 +1,42 @@
+buildscript {
+    ext.kotlinVersion = "1.1.1-eap-26"
+
+    repositories {
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
 plugins {
-    id "com.zoltu.kotlin" version "1.0.6"
     id "com.qixalite.spongestart" version "1.6.0"
     id "com.github.johnrengelman.shadow" version "1.2.4"
     id "flavor.pie.promptsign" version "1.0.2"
 }
 
+apply plugin: "kotlin"
+apply plugin: "kotlin-kapt"
+
 group "de.randombyte"
 version "2.1.1"
 
-repositories {
-    jcenter()
-    maven { url "https://repo.spongepowered.org/maven/" }
-    maven { url "https://jitpack.io" }
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
+        maven { url "https://repo.spongepowered.org/maven/" }
+        maven { url "https://jitpack.io" }
+    }
 }
 
 spongestart {
     eula true
-    spongeVanillaVersion "1.10.2-5.1.0-BETA-366"
+    spongeVanillaVersion "1.11.2-6.0.0-BETA-231"
 }
 
-ext.spongeApiVersion = "5.0.0"
-ext.kotlinVersion = "1.0.6"
+ext.spongeApiVersion = "5.1.0"
 
 configurations {
     compile.extendsFrom shadow
@@ -31,7 +47,7 @@ dependencies {
     shadow "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile "org.spongepowered:spongeapi:$spongeApiVersion"
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
-    shadow("com.github.randombyte-developer.kosp:kosp:v0.3.10.4") {
+    shadow("com.github.randombyte-developer.kosp:kosp:v0.3.11.2") {
         transitive = false
     }
     shadow(project("holograms-api")) {
@@ -46,8 +62,8 @@ shadowJar {
 
     exclude "StartServer*.*"
 
-    relocate "kotlin", "de.randombyte.holograms.internal.kotlin"
-    relocate "de.randombyte.kosp", "de.randombyte.holograms.internal.kosp"
+    relocate "kotlin", "de.randombyte.holograms.shaded.kotlin"
+    relocate "de.randombyte.kosp", "de.randombyte.holograms.shaded.kosp"
 
     classifier = null // Remove '-all' suffix from output file name
 }

@@ -29,7 +29,7 @@ import java.nio.file.Path
 class Holograms @Inject constructor(
         val logger: Logger,
         @ConfigDir(sharedRoot = false) val configPath: Path,
-        val bStats : BStats) {
+        val bStats: BStats) {
 
     companion object {
         const val NAME = "Holograms"
