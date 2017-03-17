@@ -34,7 +34,7 @@ class Holograms @Inject constructor(
     companion object {
         const val NAME = "Holograms"
         const val ID = "holograms"
-        const val VERSION = "2.1.1"
+        const val VERSION = "2.2"
         const val AUTHOR = "RandomByte"
     }
 
