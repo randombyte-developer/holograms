@@ -52,7 +52,7 @@ class Holograms @Inject constructor(
         inputFile.safelyCreateFile()
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
-                .permission("holograms")
+                .permission("holograms.list")
                 .executor(ListNearbyHologramsCommand(this))
                 .arguments(optional(integer("maxDistance".toText())))
                 .child(CommandSpec.builder()
