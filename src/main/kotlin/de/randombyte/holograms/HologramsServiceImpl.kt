@@ -52,7 +52,7 @@ class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
 
     override fun createHologram(location: Location<out Extent>, text: Text): Optional<Hologram> {
         val armorStand = location.createEntity(EntityTypes.ARMOR_STAND)
-        if (!location.extent.spawnEntity(armorStand, spawnCause)) return Optional.empty()
+        if (!location.extent.spawnEntity(armorStand)) return Optional.empty()
 
         armorStand.offer(Keys.DISPLAY_NAME, text)
         armorStand.offer(Keys.CUSTOM_NAME_VISIBLE, true)
