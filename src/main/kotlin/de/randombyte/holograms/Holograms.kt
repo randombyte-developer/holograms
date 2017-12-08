@@ -14,14 +14,17 @@ import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.args.GenericArguments.*
 import org.spongepowered.api.command.spec.CommandSpec
 import org.spongepowered.api.config.ConfigDir
+import org.spongepowered.api.data.DataRegistration
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.cause.Cause
-import org.spongepowered.api.event.cause.entity.spawn.SpawnCause
+import org.spongepowered.api.event.cause.EventContext
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes
 import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent
 import org.spongepowered.api.plugin.Plugin
+import org.spongepowered.api.plugin.PluginContainer
+import org.spongepowered.api.plugin.PluginManager
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -31,20 +34,29 @@ class Holograms @Inject constructor(
         @ConfigDir(sharedRoot = false) val configPath: Path,
         val bStats: BStats) {
 
+
     companion object {
         const val NAME = "Holograms"
         const val ID = "holograms"
-        const val VERSION = "2.2"
+        const val VERSION = "2.3"
         const val AUTHOR = "RandomByte"
     }
 
     val inputFile: Path = configPath.resolve("input.txt")
-
     @Listener
     fun onPreInit(event: GamePreInitializationEvent) {
-        val spawnCause = Cause.source(SpawnCause.builder().type(SpawnTypes.PLUGIN).build()).build()
+
+        val spawnCause = Cause.builder().append(SpawnTypes.PLUGIN).build(EventContext.empty())
         Sponge.getServiceManager().setProvider(this, HologramsService::class.java, HologramsServiceImpl(spawnCause))
-        Sponge.getDataManager().register(HologramData::class.java, HologramData.Immutable::class.java, HologramData.Builder())
+        /*Sponge.getDataManager().register(,*//* ,*//* )*/
+        DataRegistration.builder()
+                .dataClass(HologramData::class.java)
+                .immutableClass(HologramData.Immutable::class.java)
+                .builder(HologramData.Builder())
+                .manipulatorId(Holograms.AUTHOR+"-"+Holograms.ID)
+                .dataName(Holograms.AUTHOR+" "+Holograms.NAME)
+                .buildAndRegister(Sponge.getPluginManager().getPlugin(Holograms.ID).get())
+
     }
 
     @Listener
@@ -98,3 +110,4 @@ class Holograms @Inject constructor(
         }
     }
 }
+

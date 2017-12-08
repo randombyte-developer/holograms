@@ -80,6 +80,7 @@ class HologramData internal constructor(var isHologram: Boolean = false) : Abstr
 
     class Builder internal constructor() : AbstractDataBuilder<HologramData>(HologramData::class.java, 1), DataManipulatorBuilder<HologramData, Immutable> {
 
+
         override fun create() = HologramData()
 
         override fun createFrom(dataHolder: DataHolder): Optional<HologramData> = create().fill(dataHolder)

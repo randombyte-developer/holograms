@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id "com.qixalite.spongestart" version "1.6.0"
+    id "com.qixalite.spongestart" version "1.6.2"
     id "com.github.johnrengelman.shadow" version "1.2.4"
     id "flavor.pie.promptsign" version "1.0.2"
 }
@@ -33,10 +33,10 @@ allprojects {
 
 spongestart {
     eula true
-    spongeVanillaVersion "1.11.2-6.0.0-BETA-231"
+    spongeVanillaVersion "1.12.2-7.0.0-BETA-368"
 }
 
-ext.spongeApiVersion = "5.1.0"
+ext.spongeApiVersion = "7.0.0-SNAPSHOT"
 
 configurations {
     compile.extendsFrom shadow
