@@ -23,8 +23,6 @@ import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent
 import org.spongepowered.api.plugin.Plugin
-import org.spongepowered.api.plugin.PluginContainer
-import org.spongepowered.api.plugin.PluginManager
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -38,7 +36,7 @@ class Holograms @Inject constructor(
     companion object {
         const val NAME = "Holograms"
         const val ID = "holograms"
-        const val VERSION = "2.3"
+        const val VERSION = "2.2"
         const val AUTHOR = "RandomByte"
     }
 
@@ -48,7 +46,6 @@ class Holograms @Inject constructor(
 
         val spawnCause = Cause.builder().append(SpawnTypes.PLUGIN).build(EventContext.empty())
         Sponge.getServiceManager().setProvider(this, HologramsService::class.java, HologramsServiceImpl(spawnCause))
-        /*Sponge.getDataManager().register(,*//* ,*//* )*/
         DataRegistration.builder()
                 .dataClass(HologramData::class.java)
                 .immutableClass(HologramData.Immutable::class.java)
