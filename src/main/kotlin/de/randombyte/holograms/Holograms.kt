@@ -50,8 +50,8 @@ class Holograms @Inject constructor(
                 .dataClass(HologramData::class.java)
                 .immutableClass(HologramData.Immutable::class.java)
                 .builder(HologramData.Builder())
-                .manipulatorId(Holograms.AUTHOR+"-"+Holograms.ID)
-                .dataName(Holograms.AUTHOR+" "+Holograms.NAME)
+                .manipulatorId("holograms-data")
+                .dataName("Holograms Data")
                 .buildAndRegister(Sponge.getPluginManager().getPlugin(Holograms.ID).get())
 
     }
