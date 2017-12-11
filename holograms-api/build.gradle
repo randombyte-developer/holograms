@@ -4,10 +4,13 @@ apply plugin: "kotlin-kapt"
 group "de.randombyte"
 version "1.0.1"
 
+configurations {
+    compile.extendsFrom kapt
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compile "org.spongepowered:spongeapi:$spongeApiVersion"
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
 }
 
