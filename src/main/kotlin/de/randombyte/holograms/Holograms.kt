@@ -7,6 +7,7 @@ import de.randombyte.holograms.commands.SetNearestHologramText
 import de.randombyte.holograms.commands.SpawnMultiLineTextHologramCommand
 import de.randombyte.holograms.commands.SpawnTextHologramCommand
 import de.randombyte.holograms.data.HologramData
+import de.randombyte.holograms.data.HologramKeys
 import de.randombyte.kosp.bstats.BStats
 import de.randombyte.kosp.extensions.toText
 import org.slf4j.Logger
@@ -23,36 +24,40 @@ import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent
 import org.spongepowered.api.plugin.Plugin
+import org.spongepowered.api.plugin.PluginContainer
 import java.nio.file.Files
 import java.nio.file.Path
 
 @Plugin(id = Holograms.ID, name = Holograms.NAME, version = Holograms.VERSION, authors = arrayOf(Holograms.AUTHOR))
 class Holograms @Inject constructor(
-        val logger: Logger,
-        @ConfigDir(sharedRoot = false) val configPath: Path,
+        private val logger: Logger,
+        @ConfigDir(sharedRoot = false) private val configPath: Path,
+        private val pluginContainer: PluginContainer,
         val bStats: BStats) {
 
 
     companion object {
         const val NAME = "Holograms"
         const val ID = "holograms"
-        const val VERSION = "2.3"
+        const val VERSION = "3.0"
         const val AUTHOR = "RandomByte"
     }
 
     val inputFile: Path = configPath.resolve("input.txt")
+
     @Listener
     fun onPreInit(event: GamePreInitializationEvent) {
+        Sponge.getServiceManager().setProvider(this, HologramsService::class.java, HologramsServiceImpl())
 
-        val spawnCause = Cause.builder().append(SpawnTypes.PLUGIN).build(EventContext.empty())
-        Sponge.getServiceManager().setProvider(this, HologramsService::class.java, HologramsServiceImpl(spawnCause))
-        DataRegistration.builder()
+        HologramKeys.buildKeys()
+
+        Sponge.getDataManager().registerLegacyManipulatorIds("de.randombyte.holograms.data.HologramData", DataRegistration.builder()
                 .dataClass(HologramData::class.java)
                 .immutableClass(HologramData.Immutable::class.java)
                 .builder(HologramData.Builder())
                 .manipulatorId("holograms-data")
                 .dataName("Holograms Data")
-                .buildAndRegister(Sponge.getPluginManager().getPlugin(Holograms.ID).get())
+                .buildAndRegister(pluginContainer))
 
     }
 

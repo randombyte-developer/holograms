@@ -1,36 +1,22 @@
-buildscript {
-    ext.kotlinVersion = "1.1.1-eap-26"
-
-    repositories {
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
-}
-
 plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.2.10"
+    id "org.jetbrains.kotlin.kapt" version "1.2.10"
     id "com.github.johnrengelman.shadow" version "1.2.4"
     id "flavor.pie.promptsign" version "1.0.2"
 }
 
-apply plugin: "kotlin"
-apply plugin: "kotlin-kapt"
-
 group "de.randombyte"
-version "2.3"
+version "3.0"
 
 allprojects {
     repositories {
         jcenter()
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
         maven { url "https://repo.spongepowered.org/maven/" }
         maven { url "https://jitpack.io" }
     }
 }
 
-ext.spongeApiVersion = "7.0.0-SNAPSHOT"
+ext.spongeApiVersion = "7.0.0"
 
 configurations {
     compile.extendsFrom kapt
@@ -38,10 +24,9 @@ configurations {
 }
 
 dependencies {
-    shadow "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
-    shadow "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.10"
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
-    shadow("com.github.randombyte-developer.kosp:kosp:v0.3.11.2") {
+    shadow("com.github.randombyte-developer.kosp:kosp:v1.0") {
         transitive = false
     }
     shadow(project("holograms-api")) {

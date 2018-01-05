@@ -4,7 +4,6 @@ import de.randombyte.holograms.api.HologramsService
 import de.randombyte.holograms.api.HologramsService.Hologram
 import de.randombyte.holograms.data.HologramData
 import de.randombyte.holograms.data.HologramKeys
-import de.randombyte.kosp.extensions.createEntity
 import de.randombyte.kosp.extensions.getWorld
 import de.randombyte.kosp.extensions.orNull
 import de.randombyte.kosp.extensions.toOptional
@@ -12,14 +11,13 @@ import org.spongepowered.api.data.key.Keys
 import org.spongepowered.api.entity.Entity
 import org.spongepowered.api.entity.EntityTypes
 import org.spongepowered.api.entity.living.ArmorStand
-import org.spongepowered.api.event.cause.Cause
 import org.spongepowered.api.text.Text
 import org.spongepowered.api.world.Location
 import org.spongepowered.api.world.World
 import org.spongepowered.api.world.extent.Extent
 import java.util.*
 
-class HologramsServiceImpl(val spawnCause: Cause) : HologramsService {
+class HologramsServiceImpl : HologramsService {
 
     class HologramImpl internal constructor(uuid: UUID, worldUuid: UUID) : Hologram(uuid, worldUuid) {
 

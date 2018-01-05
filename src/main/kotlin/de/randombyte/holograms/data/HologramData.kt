@@ -1,15 +1,12 @@
 package de.randombyte.holograms.data
 
-import com.google.common.reflect.TypeToken
 import de.randombyte.kosp.extensions.toOptional
-import de.randombyte.kosp.extensions.typeToken
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.data.DataContainer
 import org.spongepowered.api.data.DataHolder
 import org.spongepowered.api.data.DataQuery
 import org.spongepowered.api.data.DataView
 import org.spongepowered.api.data.key.Key
-import org.spongepowered.api.data.key.KeyFactory
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder
 import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutableData
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractData
@@ -17,6 +14,7 @@ import org.spongepowered.api.data.merge.MergeFunction
 import org.spongepowered.api.data.persistence.AbstractDataBuilder
 import org.spongepowered.api.data.persistence.InvalidDataException
 import org.spongepowered.api.data.value.mutable.Value
+import org.spongepowered.api.util.TypeTokens
 import java.util.*
 
 /**
@@ -91,8 +89,14 @@ class HologramData internal constructor(var isHologram: Boolean = false) : Abstr
 }
 
 object HologramKeys {
-    val IS_HOLOGRAM: Key<Value<Boolean>> = KeyFactory.makeSingleKey(
-            Boolean::class.typeToken,
-            object : TypeToken<Value<Boolean>>() {},
-            DataQuery.of("IsHologram"), "holograms:is_hologram", "Is Hologram")
+    lateinit var IS_HOLOGRAM: Key<Value<Boolean>>
+
+    fun buildKeys() {
+        IS_HOLOGRAM = Key.builder()
+                .type(TypeTokens.BOOLEAN_VALUE_TOKEN)
+                .id("holograms:is-hologram")
+                .name("Is Hologram")
+                .query(DataQuery.of("IsHologram"))
+                .build()
+    }
 }
