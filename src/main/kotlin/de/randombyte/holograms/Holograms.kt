@@ -8,8 +8,8 @@ import de.randombyte.holograms.commands.SpawnMultiLineTextHologramCommand
 import de.randombyte.holograms.commands.SpawnTextHologramCommand
 import de.randombyte.holograms.data.HologramData
 import de.randombyte.holograms.data.HologramKeys
-import de.randombyte.kosp.bstats.BStats
 import de.randombyte.kosp.extensions.toText
+import org.bstats.sponge.MetricsLite
 import org.slf4j.Logger
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.args.GenericArguments.*
@@ -17,9 +17,6 @@ import org.spongepowered.api.command.spec.CommandSpec
 import org.spongepowered.api.config.ConfigDir
 import org.spongepowered.api.data.DataRegistration
 import org.spongepowered.api.event.Listener
-import org.spongepowered.api.event.cause.Cause
-import org.spongepowered.api.event.cause.EventContext
-import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes
 import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent
@@ -33,13 +30,13 @@ class Holograms @Inject constructor(
         private val logger: Logger,
         @ConfigDir(sharedRoot = false) private val configPath: Path,
         private val pluginContainer: PluginContainer,
-        val bStats: BStats) {
+        val bStats: MetricsLite) {
 
 
     companion object {
         const val NAME = "Holograms"
         const val ID = "holograms"
-        const val VERSION = "3.0"
+        const val VERSION = "3.1"
         const val AUTHOR = "RandomByte"
     }
 
