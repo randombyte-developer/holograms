@@ -9,7 +9,7 @@ import de.randombyte.holograms.commands.SpawnTextHologramCommand
 import de.randombyte.holograms.data.HologramData
 import de.randombyte.holograms.data.HologramKeys
 import de.randombyte.kosp.extensions.toText
-import org.bstats.sponge.MetricsLite
+import org.bstats.sponge.Metrics
 import org.slf4j.Logger
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.args.GenericArguments.*
@@ -30,13 +30,13 @@ class Holograms @Inject constructor(
         private val logger: Logger,
         @ConfigDir(sharedRoot = false) private val configPath: Path,
         private val pluginContainer: PluginContainer,
-        val bStats: MetricsLite) {
-
+        val bStats: Metrics
+) {
 
     companion object {
         const val NAME = "Holograms"
         const val ID = "holograms"
-        const val VERSION = "3.1"
+        const val VERSION = "3.1.5"
         const val AUTHOR = "RandomByte"
     }
 

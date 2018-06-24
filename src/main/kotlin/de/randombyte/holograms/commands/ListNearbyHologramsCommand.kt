@@ -5,7 +5,6 @@ import de.randombyte.holograms.api.HologramsService
 import de.randombyte.holograms.api.HologramsService.Hologram
 import de.randombyte.kosp.PlayerExecutedCommand
 import de.randombyte.kosp.extensions.*
-import de.randombyte.kosp.getServiceOrFail
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
@@ -29,7 +28,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
     }
 
     private fun sendHologramList(player: Player, maxDistance: Int, statusMessageWasSentBefore: Boolean = false) {
-        val nearbyHolograms = getServiceOrFail(HologramsService::class)
+        val nearbyHolograms = HologramsService::class.getServiceOrFail()
                 .getHolograms(player.location, maxDistance.toDouble())
 
         fun Hologram.checkIfExists(player: Player): Boolean {
@@ -50,7 +49,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
                 copyCallback = { hologram ->
                     if (!player.checkPermission("holograms.copy")) return@getHologramTextList
                     if (hologram.checkIfExists(player)) {
-                        getServiceOrFail(HologramsService::class).createHologram(player.location, hologram.text)
+                        HologramsService::class.getServiceOrFail().createHologram(player.location, hologram.text)
                         player.sendMessage("Copied Hologram to your location!".yellow())
                     }
                     sendHologramList(player, maxDistance, statusMessageWasSentBefore = true) // Display refreshed list
@@ -91,7 +90,7 @@ class ListNearbyHologramsCommand(val pluginInstance: Holograms) : PlayerExecuted
             player.sendMessage(Text.EMPTY) // clear line above the following list
             CHAT_MAX_LINES_SEEN
         }
-        getServiceOrFail(PaginationService::class).builder()
+        PaginationService::class.getServiceOrFail().builder()
                 .linesPerPage(linesPerPage)
                 .title(getHeaderText(maxDistance))
                 .contents(hologramTextList)

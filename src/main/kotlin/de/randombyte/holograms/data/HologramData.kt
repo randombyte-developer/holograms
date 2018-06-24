@@ -27,11 +27,11 @@ class HologramData internal constructor(var isHologram: Boolean = false) : Abstr
     }
 
     override fun registerGettersAndSetters() {
-        registerFieldGetter(HologramKeys.IS_HOLOGRAM, { isHologram })
-        registerFieldSetter(HologramKeys.IS_HOLOGRAM, { isHologram = it })
-        registerKeyValue(HologramKeys.IS_HOLOGRAM, {
+        registerFieldGetter(HologramKeys.IS_HOLOGRAM) { isHologram }
+        registerFieldSetter(HologramKeys.IS_HOLOGRAM) { isHologram = it }
+        registerKeyValue(HologramKeys.IS_HOLOGRAM) {
             Sponge.getRegistry().valueFactory.createValue(HologramKeys.IS_HOLOGRAM, isHologram)
-        })
+        }
     }
 
     override fun fill(dataHolder: DataHolder, overlap: MergeFunction): Optional<HologramData> {
@@ -63,10 +63,10 @@ class HologramData internal constructor(var isHologram: Boolean = false) : Abstr
         }
 
         override fun registerGetters() {
-            registerFieldGetter(HologramKeys.IS_HOLOGRAM, { isHologram })
-            registerKeyValue(HologramKeys.IS_HOLOGRAM, {
+            registerFieldGetter(HologramKeys.IS_HOLOGRAM) { isHologram }
+            registerKeyValue(HologramKeys.IS_HOLOGRAM) {
                 Sponge.getRegistry().valueFactory.createValue(HologramKeys.IS_HOLOGRAM, isHologram).asImmutable()
-            })
+            }
         }
 
         override fun asMutable() = HologramData(isHologram)

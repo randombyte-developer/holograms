@@ -1,12 +1,12 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.10"
-    id "org.jetbrains.kotlin.kapt" version "1.2.10"
-    id "com.github.johnrengelman.shadow" version "1.2.4"
+    id "org.jetbrains.kotlin.jvm" version "1.2.50"
+    id "org.jetbrains.kotlin.kapt" version "1.2.50"
+    id "com.github.johnrengelman.shadow" version "2.0.4"
     id "flavor.pie.promptsign" version "1.0.2"
 }
 
 group "de.randombyte"
-version "3.1"
+version "3.1.5"
 
 allprojects {
     repositories {
@@ -25,15 +25,11 @@ configurations {
 }
 
 dependencies {
-    shadow "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.10"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.50"
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
-    shadow "org.bstats:bstats-sponge-lite:1.2"
-    shadow("com.github.randombyte-developer.kosp:kosp:v1.1") {
-        transitive = false
-    }
-    shadow(project("holograms-api")) {
-        transitive = false
-    }
+    shadow "org.bstats:bstats-sponge:1.2"
+    shadow("com.github.randombyte-developer.kosp:kosp:v2.2.2") { transitive = false }
+    shadow(project("holograms-api")) { transitive = false }
 }
 
 jar.enabled = false

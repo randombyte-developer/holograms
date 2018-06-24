@@ -9,7 +9,7 @@ configurations {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.10"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
 }
 
