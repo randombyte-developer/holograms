@@ -1,12 +1,28 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.flavor.pie:promptsign:1.0.2"
+    }
+}
+
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.50"
     id "org.jetbrains.kotlin.kapt" version "1.2.50"
     id "com.github.johnrengelman.shadow" version "2.0.4"
-    id "flavor.pie.promptsign" version "1.0.2"
+}
+
+def isJitpack = System.getenv("JITPACK") != null
+
+if (!isJitpack) {
+    apply plugin: "flavor.pie.promptsign"
 }
 
 group "de.randombyte"
-version "3.1.5"
+version "3.1.6"
 
 allprojects {
     repositories {
@@ -44,7 +60,9 @@ shadowJar {
     classifier = null // Remove '-all' suffix from output file name
 }
 build.dependsOn shadowJar
-signArchives.dependsOn shadowJar
+if (!isJitpack) {
+    signArchives.dependsOn shadowJar
+}
 
 compileKotlin {
     kotlinOptions {
