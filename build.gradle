@@ -10,6 +10,7 @@ buildscript {
 }
 
 plugins {
+    id "maven"
     id "org.jetbrains.kotlin.jvm" version "1.2.50"
     id "org.jetbrains.kotlin.kapt" version "1.2.50"
     id "com.github.johnrengelman.shadow" version "2.0.4"
@@ -60,6 +61,7 @@ shadowJar {
     classifier = null // Remove '-all' suffix from output file name
 }
 build.dependsOn shadowJar
+install.dependsOn shadowJar
 if (!isJitpack) {
     signArchives.dependsOn shadowJar
 }
