@@ -23,14 +23,14 @@ if (!isJitpack) {
 }
 
 group "de.randombyte"
-version "3.1.6"
+version "3.2.0"
 
 allprojects {
     repositories {
         jcenter()
         maven { url "https://repo.spongepowered.org/maven/" }
         maven { url "https://jitpack.io" }
-        maven { url "http://repo.bstats.org/content/repositories/releases/" }
+        maven { url "https://repo.codemc.org/repository/maven-public" }
     }
 }
 
@@ -44,7 +44,7 @@ configurations {
 dependencies {
     shadow "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.50"
     kapt "org.spongepowered:spongeapi:$spongeApiVersion"
-    shadow "org.bstats:bstats-sponge:1.2"
+    shadow "org.bstats:bstats-sponge:1.4"
     shadow("com.github.randombyte-developer.kosp:kosp:v2.2.2") { transitive = false }
     shadow(project("holograms-api")) { transitive = false }
 }
@@ -55,7 +55,6 @@ shadowJar {
     configurations = [project.configurations.shadow]
 
     relocate "kotlin", "de.randombyte.holograms.shaded.kotlin"
-    relocate "org.bstats", "de.randombyte.holograms.shaded.bstats"
     relocate "de.randombyte.kosp", "de.randombyte.holograms.shaded.kosp"
 
     classifier = null // Remove '-all' suffix from output file name
